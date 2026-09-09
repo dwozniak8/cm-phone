@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cm_phone_number_holder"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/activity_margin"
+    android:paddingTop="@dimen/normal_margin"
+    android:paddingEnd="@dimen/activity_margin"
+    android:paddingBottom="@dimen/normal_margin">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <org.fossify.commons.views.MyTextView
+            android:id="@+id/cm_phone_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textDirection="firstStrongLtr"
+            android:textSize="@dimen/bigger_text_size"
+            tools:text="+48 600 100 200" />
+
+        <org.fossify.commons.views.MyTextView
+            android:id="@+id/cm_phone_number_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.7"
+            android:textSize="@dimen/small_text_size"
+            tools:text="mobile" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/cm_phone_call"
+        android:layout_width="@dimen/normal_icon_size"
+        android:layout_height="@dimen/normal_icon_size"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/call_number"
+        android:padding="@dimen/small_margin"
+        android:src="@drawable/ic_phone_vector" />
+
+</LinearLayout>

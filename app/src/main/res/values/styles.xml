@@ -21,4 +21,32 @@
         <item name="android:layout_centerHorizontal">true</item>
     </style>
 
+    <style name="CmDetailDivider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginTop">@dimen/normal_margin</item>
+        <item name="android:background">?attr/colorControlHighlight</item>
+    </style>
+
+    <style name="CmDetailLabel">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/activity_margin</item>
+        <item name="android:layout_marginTop">@dimen/normal_margin</item>
+        <item name="android:layout_marginEnd">@dimen/activity_margin</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">@dimen/small_text_size</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="CmDetailValue">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/activity_margin</item>
+        <item name="android:layout_marginTop">@dimen/small_margin</item>
+        <item name="android:layout_marginEnd">@dimen/activity_margin</item>
+        <item name="android:textSize">@dimen/bigger_text_size</item>
+        <item name="android:textIsSelectable">true</item>
+    </style>
+
 </resources>

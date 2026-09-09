@@ -82,6 +82,8 @@ object CmContactStore {
 
     fun getAll(): List<CmContact> = contacts
 
+    fun findById(id: String): CmContact? = contacts.firstOrNull { it.id == id }
+
     fun findByNumber(number: String?): CmContact? {
         if (number.isNullOrBlank()) return null
         val key = number.toCmNumberKey()

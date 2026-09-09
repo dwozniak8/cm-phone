@@ -1,6 +1,7 @@
 package org.fossify.phone.fragments
 
 import android.content.Context
+import android.content.Intent
 import android.util.AttributeSet
 import org.fossify.commons.extensions.applyColorFilter
 import org.fossify.commons.extensions.areSystemAnimationsEnabled
@@ -14,6 +15,7 @@ import org.fossify.commons.extensions.underlineText
 import org.fossify.commons.extensions.value
 import org.fossify.commons.helpers.ensureBackgroundThread
 import org.fossify.phone.R
+import org.fossify.phone.activities.CmContactActivity
 import org.fossify.phone.activities.SimpleActivity
 import org.fossify.phone.adapters.CmContactsAdapter
 import org.fossify.phone.cm.CmApiException
@@ -27,6 +29,7 @@ import org.fossify.phone.cm.cmAuthStore
 import org.fossify.phone.databinding.FragmentCmBinding
 import org.fossify.phone.databinding.FragmentCmLayoutBinding
 import org.fossify.phone.extensions.config
+import org.fossify.phone.helpers.CM_CONTACT_ID
 import org.fossify.phone.interfaces.RefreshItemsListener
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -174,8 +177,12 @@ class CmFragment(context: Context, attributeSet: AttributeSet) :
                 activity = activity as SimpleActivity,
                 contacts = allContacts,
                 recyclerView = binding.cmList,
-                itemClick = {
-                    // Batch 3: open CmContactActivity
+                itemClick = { item ->
+                    val cmContact = item as CmContact
+                    context.startActivity(
+                        Intent(context, CmContactActivity::class.java)
+                            .putExtra(CM_CONTACT_ID, cmContact.id)
+                    )
                 },
             )
             if (context.areSystemAnimationsEnabled) {

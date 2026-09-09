@@ -93,6 +93,13 @@
             android:parentActivityName=".activities.SettingsActivity" />
 
         <activity
+            android:name=".activities.CmContactActivity"
+            android:configChanges="orientation"
+            android:exported="false"
+            android:label="@string/cm_tab"
+            android:parentActivityName=".activities.MainActivity" />
+
+        <activity
             android:name=".activities.ConferenceActivity"
             android:configChanges="orientation"
             android:exported="false"

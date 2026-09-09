@@ -90,4 +90,8 @@
     <string name="cm_update_database">Zaktualizuj bazę</string>
     <string name="cm_updating_database">Aktualizuję bazę CM…</string>
     <string name="cm_update_failed">Nie udało się zaktualizować bazy CM</string>
+    <string name="cm_contact_not_found">Ten kontakt CM nie jest już dostępny</string>
+    <string name="cm_detail_note">Notatka</string>
+    <string name="cm_detail_property">Powiązana nieruchomość</string>
+    <string name="cm_detail_client">Powiązany klient</string>
 </resources>

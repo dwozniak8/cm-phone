@@ -103,6 +103,10 @@
     <string name="cm_update_database">Update database</string>
     <string name="cm_updating_database">Updating the CM database…</string>
     <string name="cm_update_failed">Could not update the CM database</string>
+    <string name="cm_contact_not_found">This CM contact is no longer available</string>
+    <string name="cm_detail_note">Note</string>
+    <string name="cm_detail_property">Related property</string>
+    <string name="cm_detail_client">Related client</string>
 
     <!--
         Haven't found some strings? There's more at

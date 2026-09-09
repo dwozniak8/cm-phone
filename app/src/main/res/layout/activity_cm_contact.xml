@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cm_contact_coordinator"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <org.fossify.commons.views.MyAppBarLayout
+        android:id="@+id/cm_contact_appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/cm_contact_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/color_primary"
+            app:titleTextAppearance="@style/AppTheme.ActionBar.TitleTextStyle" />
+
+    </org.fossify.commons.views.MyAppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/cm_contact_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/bigger_margin">
+
+            <ImageView
+                android:id="@+id/cm_contact_photo"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/bigger_margin"
+                android:contentDescription="@null" />
+
+            <org.fossify.commons.views.MyTextView
+                android:id="@+id/cm_contact_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/normal_margin"
+                android:paddingStart="@dimen/activity_margin"
+                android:paddingEnd="@dimen/activity_margin"
+                android:gravity="center"
+                android:textSize="@dimen/bigger_text_size"
+                android:textStyle="bold"
+                android:textDirection="firstStrongLtr"
+                tools:text="Anna Nowak" />
+
+            <LinearLayout
+                android:id="@+id/cm_contact_numbers_holder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/normal_margin"
+                android:orientation="vertical" />
+
+            <LinearLayout
+                android:id="@+id/cm_contact_note_holder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <View style="@style/CmDetailDivider" />
+
+                <org.fossify.commons.views.MyTextView
+                    android:id="@+id/cm_contact_note_label"
+                    style="@style/CmDetailLabel"
+                    android:text="@string/cm_detail_note" />
+
+                <org.fossify.commons.views.MyTextView
+                    android:id="@+id/cm_contact_note"
+                    style="@style/CmDetailValue"
+                    tools:text="Zainteresowana mieszkaniem 2-pokojowym do 600 tys. Oddzwonić w piątek." />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/cm_contact_property_holder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <View style="@style/CmDetailDivider" />
+
+                <org.fossify.commons.views.MyTextView
+                    android:id="@+id/cm_contact_property_label"
+                    style="@style/CmDetailLabel"
+                    android:text="@string/cm_detail_property" />
+
+                <org.fossify.commons.views.MyTextView
+                    android:id="@+id/cm_contact_property"
+                    style="@style/CmDetailValue"
+                    tools:text="ul. Długa 4/12, Gdańsk" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/cm_contact_client_holder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <View style="@style/CmDetailDivider" />
+
+                <org.fossify.commons.views.MyTextView
+                    android:id="@+id/cm_contact_client_label"
+                    style="@style/CmDetailLabel"
+                    android:text="@string/cm_detail_client" />
+
+                <org.fossify.commons.views.MyTextView
+                    android:id="@+id/cm_contact_client"
+                    style="@style/CmDetailValue"
+                    tools:text="Biuro Nieruchomości XYZ" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

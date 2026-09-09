@@ -26,6 +26,7 @@ const val CM_PAIRING_URL = "cm_pairing_url"
 const val CM_LAST_SYNC_TS = "cm_last_sync_ts"
 const val DEFAULT_CM_PAIRING_URL = "https://app.crm.example/devices"
 const val CM_SYNC_INTERVAL_MS = 4 * 60 * 60 * 1000L
+const val CM_CONTACT_ID = "cm_contact_id"
 
 const val ALL_TABS_MASK = TAB_CONTACTS or TAB_FAVORITES or TAB_CALL_HISTORY
 
