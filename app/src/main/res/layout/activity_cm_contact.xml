@@ -75,12 +75,14 @@
                 <org.fossify.commons.views.MyTextView
                     android:id="@+id/cm_contact_note_label"
                     style="@style/CmDetailLabel"
-                    android:text="@string/cm_detail_note" />
+                    android:text="@string/cm_detail_notes" />
 
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/cm_contact_note"
-                    style="@style/CmDetailValue"
-                    tools:text="Zainteresowana mieszkaniem 2-pokojowym do 600 tys. Oddzwonić w piątek." />
+                <LinearLayout
+                    android:id="@+id/cm_contact_note_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/small_margin"
+                    android:orientation="vertical" />
 
             </LinearLayout>
 
@@ -97,12 +99,14 @@
                 <org.fossify.commons.views.MyTextView
                     android:id="@+id/cm_contact_property_label"
                     style="@style/CmDetailLabel"
-                    android:text="@string/cm_detail_property" />
+                    android:text="@string/cm_detail_properties" />
 
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/cm_contact_property"
-                    style="@style/CmDetailValue"
-                    tools:text="ul. Długa 4/12, Gdańsk" />
+                <LinearLayout
+                    android:id="@+id/cm_contact_property_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/small_margin"
+                    android:orientation="vertical" />
 
             </LinearLayout>
 
@@ -119,12 +123,14 @@
                 <org.fossify.commons.views.MyTextView
                     android:id="@+id/cm_contact_client_label"
                     style="@style/CmDetailLabel"
-                    android:text="@string/cm_detail_client" />
+                    android:text="@string/cm_detail_clients" />
 
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/cm_contact_client"
-                    style="@style/CmDetailValue"
-                    tools:text="Biuro Nieruchomości XYZ" />
+                <LinearLayout
+                    android:id="@+id/cm_contact_client_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/small_margin"
+                    android:orientation="vertical" />
 
             </LinearLayout>
 

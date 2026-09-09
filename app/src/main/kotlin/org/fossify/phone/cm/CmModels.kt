@@ -14,9 +14,9 @@ data class CmContact(
     val lastName: String = "",
     val phoneNumbers: List<CmPhoneNumber> = emptyList(),
     val photoUrl: String? = null,
-    val note: String? = null,
-    val relatedProperty: CmRef? = null,
-    val relatedClient: CmRef? = null,
+    val notes: List<String> = emptyList(),
+    val relatedProperties: List<CmRef> = emptyList(),
+    val relatedClients: List<CmRef> = emptyList(),
     val updatedAt: Long = 0L,
 ) {
     val fullName: String
@@ -32,7 +32,10 @@ data class CmPhoneNumber(
     val label: String? = null,
 )
 
-/** A lightweight reference to a related CM entity (property or client). Label only. */
+/**
+ * A lightweight reference to a related CM record (property or client). [id] is
+ * used to build the deep link into the CM web app; [label] is what we show.
+ */
 @Serializable
 data class CmRef(
     val id: String,

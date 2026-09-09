@@ -42,7 +42,7 @@ class FakeCmApi : CmApi {
             firstName = request.firstName,
             lastName = request.lastName,
             phoneNumbers = request.phoneNumbers,
-            note = request.note,
+            notes = listOfNotNull(request.note?.takeIf { it.isNotBlank() }),
             updatedAt = System.currentTimeMillis(),
         )
         contacts.add(created)
@@ -58,9 +58,18 @@ class FakeCmApi : CmApi {
                 firstName = "Anna",
                 lastName = "Nowak",
                 phoneNumbers = listOf(CmPhoneNumber("+48600100200", "mobile")),
-                note = "Zainteresowana mieszkaniem 2-pokojowym do 600 tys. Oddzwonić w piątek.",
-                relatedProperty = CmRef("p9", "ul. Długa 4/12, Gdańsk"),
-                relatedClient = CmRef("cl3", "Biuro Nieruchomości XYZ"),
+                notes = listOf(
+                    "Zainteresowana mieszkaniem 2-pokojowym do 600 tys. Oddzwonić w piątek.",
+                    "Ma zdolność kredytową potwierdzoną przez doradcę.",
+                    "Woli parter lub pierwsze piętro, bez windy odpada.",
+                ),
+                relatedProperties = listOf(
+                    CmRef("p9", "ul. Długa 4/12, Gdańsk"),
+                    CmRef("p11", "ul. Podwale Staromiejskie 20/3, Gdańsk"),
+                ),
+                relatedClients = listOf(
+                    CmRef("cl3", "Biuro Nieruchomości XYZ"),
+                ),
                 updatedAt = 1_725_800_000_000,
             ),
             CmContact(
@@ -68,8 +77,12 @@ class FakeCmApi : CmApi {
                 firstName = "Piotr",
                 lastName = "Kowalczyk",
                 phoneNumbers = listOf(CmPhoneNumber("+48512345678", "mobile")),
-                note = "Sprzedający, dom w Sopocie. Umówiona wycena na przyszły tydzień.",
-                relatedProperty = CmRef("p14", "ul. Morska 8, Sopot"),
+                notes = listOf(
+                    "Sprzedający, dom w Sopocie. Umówiona wycena na przyszły tydzień.",
+                ),
+                relatedProperties = listOf(
+                    CmRef("p14", "ul. Morska 8, Sopot"),
+                ),
                 updatedAt = 1_725_810_000_000,
             ),
             CmContact(
@@ -80,7 +93,10 @@ class FakeCmApi : CmApi {
                     CmPhoneNumber("+48734000111", "mobile"),
                     CmPhoneNumber("+48583030303", "work"),
                 ),
-                relatedClient = CmRef("cl7", "Deweloper Bałtyk Sp. z o.o."),
+                relatedClients = listOf(
+                    CmRef("cl7", "Deweloper Bałtyk Sp. z o.o."),
+                    CmRef("cl9", "Fundusz Mieszkania Plus"),
+                ),
                 updatedAt = 1_725_820_000_000,
             ),
             CmContact(
@@ -88,7 +104,10 @@ class FakeCmApi : CmApi {
                 firstName = "Tomasz",
                 lastName = "Lewandowski",
                 phoneNumbers = listOf(CmPhoneNumber("+48605998877", "mobile")),
-                note = "Inwestor, szuka lokali pod wynajem krótkoterminowy.",
+                notes = listOf(
+                    "Inwestor, szuka lokali pod wynajem krótkoterminowy.",
+                    "Budżet ok. 1,2 mln, gotówka.",
+                ),
                 updatedAt = 1_725_830_000_000,
             ),
             CmContact(
@@ -96,8 +115,12 @@ class FakeCmApi : CmApi {
                 firstName = "Magdalena",
                 lastName = "Dąbrowska",
                 phoneNumbers = listOf(CmPhoneNumber("+48501202303", "mobile")),
-                relatedProperty = CmRef("p21", "ul. Grunwaldzka 120/5, Gdańsk"),
-                relatedClient = CmRef("cl3", "Biuro Nieruchomości XYZ"),
+                relatedProperties = listOf(
+                    CmRef("p21", "ul. Grunwaldzka 120/5, Gdańsk"),
+                ),
+                relatedClients = listOf(
+                    CmRef("cl3", "Biuro Nieruchomości XYZ"),
+                ),
                 updatedAt = 1_725_840_000_000,
             ),
             CmContact(
@@ -105,7 +128,7 @@ class FakeCmApi : CmApi {
                 firstName = "Marek",
                 lastName = "Zieliński",
                 phoneNumbers = listOf(CmPhoneNumber("+48889112233", "mobile")),
-                note = "Klient po przetargu, czeka na decyzję kredytową.",
+                notes = listOf("Klient po przetargu, czeka na decyzję kredytową."),
                 updatedAt = 1_725_850_000_000,
             ),
         )

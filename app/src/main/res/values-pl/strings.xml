@@ -91,7 +91,9 @@
     <string name="cm_updating_database">Aktualizuję bazę CM…</string>
     <string name="cm_update_failed">Nie udało się zaktualizować bazy CM</string>
     <string name="cm_contact_not_found">Ten kontakt CM nie jest już dostępny</string>
-    <string name="cm_detail_note">Notatka</string>
-    <string name="cm_detail_property">Powiązana nieruchomość</string>
-    <string name="cm_detail_client">Powiązany klient</string>
+    <string name="cm_detail_notes">Notatki</string>
+    <string name="cm_detail_properties">Powiązane nieruchomości</string>
+    <string name="cm_detail_clients">Powiązani klienci poszukujący</string>
+    <string name="cm_open_in_cm">Otwórz w CM</string>
+    <string name="cm_bullet">•</string>
 </resources>

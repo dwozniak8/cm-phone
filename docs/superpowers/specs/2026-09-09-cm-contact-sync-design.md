@@ -59,14 +59,16 @@ Errors: `401` → app clears auth, CM tab returns to the pairing prompt.
     "lastName": "Nowak",
     "phoneNumbers": [{ "number": "+48600100200", "label": "mobile" }],
     "photoUrl": "https://.../c1.jpg",
-    "note": "Zainteresowana mieszkaniem 2-pok.",
-    "relatedProperty": { "id": "p9", "label": "ul. Długa 4/12, Gdańsk" },
-    "relatedClient": { "id": "cl3", "label": "Biuro Nieruchomości XYZ" },
+    "notes": ["Zainteresowana mieszkaniem 2-pok.", "Ma zdolność kredytową."],
+    "relatedProperties": [{ "id": "p9", "label": "ul. Długa 4/12, Gdańsk" }],
+    "relatedClients": [{ "id": "cl3", "label": "Biuro Nieruchomości XYZ" }],
     "updatedAt": 1725800000000
   }
 ]
 ```
-`note`, `relatedProperty`, `relatedClient`, `photoUrl` all nullable.
+`photoUrl` nullable; `notes`, `relatedProperties`, `relatedClients` default to `[]`.
+Each `CmRef.id` deep-links into the CM web app: property ->
+`<cmAppUrl>/app/builds/<id>`, prospect -> `<cmAppUrl>/app/clients/<id>`.
 
 ### `POST /contacts`
 Request: `{ "firstName": "...", "lastName": "...", "note": "...",
@@ -79,7 +81,7 @@ Response: the created contact (same shape as list items).
 
 | File | Responsibility |
 |---|---|
-| `CmContact.kt` | `CmContact`, `CmPhoneNumber`, `CmRef` models (`@Serializable`). `fullName`. |
+| `CmContact.kt` | `CmContact` (`notes`, `relatedProperties`, `relatedClients` lists), `CmPhoneNumber`, `CmRef` models (`@Serializable`). `fullName`. |
 | `CmDtos.kt` | `PairRequest/Response`, `RefreshRequest/Response`, `CreateContactRequest`, `CmUser`. |
 | `CmApi.kt` | `interface CmApi` — blocking `pair`, `refresh`, `getContacts`, `createContact`. |
 | `HttpCmApi.kt` | OkHttp + kotlinx.serialization implementation. |
@@ -91,7 +93,7 @@ Response: the created contact (same shape as list items).
 | `CmEvents.kt` | `CmContactsUpdatedEvent`, `CmPairingStateChangedEvent`. |
 | `CmExt.kt` | `Context.cmAuthStore`, number-normalisation helper. |
 
-`Config.kt` / `Constants.kt` gain `cmBaseUrl`, `cmLastSyncTs`, `cmPairingUrl`.
+`Config.kt` / `Constants.kt` gain `cmBaseUrl`, `cmLastSyncTs`, `cmPairingUrl`, `cmAppUrl`.
 
 ## UI changes
 
@@ -111,10 +113,13 @@ Response: the created contact (same shape as list items).
   (name + number + photo). Search filters the list.
 
 ### Batch 3 — CM contact detail
-- `CmContactActivity`: avatar + name + call button (reuses
+- `CmContactActivity`: avatar + name + one call row per phone number (reuses
   `startCallWithConfirmationCheck`, SIM selector when applicable). Below, read-only
-  cards, each hidden when empty: **Notatka**, **Powiązana nieruchomość**,
-  **Powiązany klient**. Data from the local cache.
+  sections, each hidden when empty and each rendered as a **list**: **Notatki**,
+  **Powiązane nieruchomości**, **Powiązani klienci poszukujący**. Every property /
+  prospect row has an "open in CM" button → `launchViewIntent` to
+  `<cmAppUrl>/app/builds/<id>` or `<cmAppUrl>/app/clients/<id>`. Data from the
+  local cache. `cmAppUrl` is a new Config value (default `https://app.crm.example`).
 - CM tab item click → `CmContactActivity`.
 
 ### Batch 4 — Incoming / ongoing call name
