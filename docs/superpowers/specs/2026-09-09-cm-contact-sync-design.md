@@ -125,9 +125,12 @@ Response: the created contact (same shape as list items).
 - CM tab item click → `CmContactActivity`.
 
 ### Batch 4 — Incoming / ongoing call name
-- `getCallContact()` in `CallContactHelper.kt`: look up `CmContactStore` first;
-  on hit, use the CM name (CM wins over system contact). Feeds both `CallActivity`
-  and `CallNotificationManager`.
+- `getCallContact()` in `CallContactHelper.kt`: also look the number up in
+  `CmContactStore`; on hit the CM name (and number label) win over the system
+  contact and `CallContact.isCmContact` is set. Feeds `CallActivity`,
+  `CallNotificationManager` and the conference list.
+- `CallActivity`: when `isCmContact`, a blinking **"Kontakt z aplikacji"** badge
+  (`caller_cm_badge`) shows under the caller name.
 
 ### Batch 5 — Dialer "already in CM" warning
 - Manual dial in `DialpadActivity` (`initCall` / string `startCallWithConfirmationCheck`):

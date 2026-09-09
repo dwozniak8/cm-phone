@@ -83,6 +83,7 @@ fun getCallContact(context: Context, call: Call?, callback: (CallContact) -> Uni
                     if (cmName.isNotBlank()) {
                         callContact.name = cmName
                     }
+                    callContact.isCmContact = true
 
                     val cmLabel = cmContact.phoneNumbers
                         .firstOrNull { it.number.toCmNumberKey() == number.toCmNumberKey() }

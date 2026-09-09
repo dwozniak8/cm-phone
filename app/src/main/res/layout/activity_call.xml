@@ -84,12 +84,30 @@
         android:paddingStart="@dimen/medium_margin"
         android:paddingEnd="@dimen/medium_margin"
         android:textSize="@dimen/caller_name_text_size"
-        app:layout_constraintBottom_toTopOf="@id/caller_number"
+        app:layout_constraintBottom_toTopOf="@id/caller_cm_badge"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/caller_avatar"
         android:textDirection="firstStrongLtr"
         tools:text="Caller name" />
+
+    <org.fossify.commons.views.MyTextView
+        android:id="@+id/caller_cm_badge"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/small_margin"
+        android:gravity="center_horizontal"
+        android:letterSpacing="0.15"
+        android:text="@string/cm_contact_badge"
+        android:textAllCaps="true"
+        android:textSize="@dimen/normal_text_size"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/caller_number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/caller_name_label"
+        tools:visibility="visible" />
 
     <org.fossify.commons.views.MyTextView
         android:id="@+id/caller_number"
@@ -101,7 +119,7 @@
         app:layout_constraintBottom_toTopOf="@id/call_status_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/caller_name_label"
+        app:layout_constraintTop_toBottomOf="@+id/caller_cm_badge"
         android:textDirection="firstStrongLtr"
         tools:text="+1 (123) 456-7890" />
 
