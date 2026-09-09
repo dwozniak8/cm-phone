@@ -99,8 +99,10 @@
     <string name="cm_get_code">Tap here to see your code</string>
     <string name="cm_pairing_success">Paired with %s</string>
     <string name="cm_pairing_failed">Invalid pairing code</string>
-    <string name="cm_paired_empty">No CM contacts yet. Update the database.</string>
+    <string name="cm_paired_empty">No CM contacts yet. Tap to update the database.</string>
     <string name="cm_update_database">Update database</string>
+    <string name="cm_updating_database">Updating the CM database…</string>
+    <string name="cm_update_failed">Could not update the CM database</string>
 
     <!--
         Haven't found some strings? There's more at

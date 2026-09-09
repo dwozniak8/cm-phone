@@ -86,6 +86,8 @@
     <string name="cm_get_code">Kliknij tutaj, aby zobaczyć kod</string>
     <string name="cm_pairing_success">Sparowano z %s</string>
     <string name="cm_pairing_failed">Nieprawidłowy kod parowania</string>
-    <string name="cm_paired_empty">Brak kontaktów CM. Zaktualizuj bazę.</string>
+    <string name="cm_paired_empty">Brak kontaktów CM. Kliknij, aby zaktualizować bazę.</string>
     <string name="cm_update_database">Zaktualizuj bazę</string>
+    <string name="cm_updating_database">Aktualizuję bazę CM…</string>
+    <string name="cm_update_failed">Nie udało się zaktualizować bazy CM</string>
 </resources>

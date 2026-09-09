@@ -3,6 +3,7 @@ package org.fossify.phone.fragments
 import android.content.Context
 import android.util.AttributeSet
 import org.fossify.commons.extensions.applyColorFilter
+import org.fossify.commons.extensions.areSystemAnimationsEnabled
 import org.fossify.commons.extensions.beGone
 import org.fossify.commons.extensions.beVisible
 import org.fossify.commons.extensions.beVisibleIf
@@ -13,11 +14,15 @@ import org.fossify.commons.extensions.underlineText
 import org.fossify.commons.extensions.value
 import org.fossify.commons.helpers.ensureBackgroundThread
 import org.fossify.phone.R
+import org.fossify.phone.activities.SimpleActivity
+import org.fossify.phone.adapters.CmContactsAdapter
 import org.fossify.phone.cm.CmApiException
 import org.fossify.phone.cm.CmClient
+import org.fossify.phone.cm.CmContact
 import org.fossify.phone.cm.CmContactStore
 import org.fossify.phone.cm.CmContactsUpdatedEvent
 import org.fossify.phone.cm.CmPairingStateChangedEvent
+import org.fossify.phone.cm.CmSyncManager
 import org.fossify.phone.cm.cmAuthStore
 import org.fossify.phone.databinding.FragmentCmBinding
 import org.fossify.phone.databinding.FragmentCmLayoutBinding
@@ -28,14 +33,21 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 /**
- * Replaces the former Favorites tab. Batch 1: pairing (enter code) and the
- * paired/empty state. The contact list itself lands in Batch 2.
+ * Replaces the former Favorites tab.
+ *  - unpaired: enter-code pairing prompt
+ *  - paired + empty: placeholder that also triggers a sync when tapped
+ *  - paired + populated: the CM contact list (from [CmContactStore], offline)
+ *
+ * A manual sync is also reachable from the overflow menu ("Zaktualizuj bazę",
+ * handled in MainActivity -> [refreshFromServer]).
  */
 class CmFragment(context: Context, attributeSet: AttributeSet) :
     MyViewPagerFragment<MyViewPagerFragment.CmInnerBinding>(context, attributeSet), RefreshItemsListener {
 
     private lateinit var binding: FragmentCmLayoutBinding
     private var pairing = false
+    private var syncing = false
+    private var allContacts = listOf<CmContact>()
 
     override fun onFinishInflate() {
         super.onFinishInflate()
@@ -49,8 +61,12 @@ class CmFragment(context: Context, attributeSet: AttributeSet) :
             underlineText()
             setOnClickListener { activity?.launchViewIntent(activity!!.config.cmPairingUrl) }
         }
+        binding.cmPlaceholder.setOnClickListener {
+            if (context.cmAuthStore.isPaired) refreshFromServer()
+        }
 
         CmContactStore.ensureLoaded(context)
+        allContacts = CmContactStore.getAll()
         updateState()
     }
 
@@ -63,23 +79,58 @@ class CmFragment(context: Context, attributeSet: AttributeSet) :
 
     override fun setupColors(textColor: Int, primaryColor: Int, properPrimaryColor: Int) {
         binding.cmPairingPrompt.setTextColor(textColor)
-        binding.cmPlaceholder.setTextColor(textColor)
         binding.cmPairingCode.setTextColor(textColor)
+        binding.cmPlaceholder.setTextColor(textColor)
         binding.cmGetCode.setTextColor(properPrimaryColor)
 
         binding.cmPairButton.background?.applyColorFilter(properPrimaryColor)
         binding.cmPairButton.setTextColor(properPrimaryColor.getContrastColor())
+
+        (binding.cmList.adapter as? CmContactsAdapter)?.updateTextColor(textColor)
     }
 
     override fun refreshItems(invalidate: Boolean, callback: (() -> Unit)?) {
         CmContactStore.ensureLoaded(context)
+        allContacts = CmContactStore.getAll()
         updateState()
         callback?.invoke()
     }
 
-    override fun onSearchClosed() {}
+    /** Wired to the "Zaktualizuj bazę" overflow item and the empty-state tap. */
+    fun refreshFromServer() {
+        if (syncing || !context.cmAuthStore.isPaired) return
+        val activity = activity ?: return
 
-    override fun onSearchQueryChanged(text: String) {}
+        syncing = true
+        activity.toast(R.string.cm_updating_database)
+        CmSyncManager.syncNow(activity) { success ->
+            activity.runOnUiThread {
+                syncing = false
+                if (!success) {
+                    activity.toast(R.string.cm_update_failed)
+                }
+                // a successful sync also posts CmContactsUpdatedEvent -> onContactsUpdated
+            }
+        }
+    }
+
+    override fun onSearchClosed() {
+        (binding.cmList.adapter as? CmContactsAdapter)?.updateItems(allContacts)
+    }
+
+    override fun onSearchQueryChanged(text: String) {
+        val query = text.trim()
+        val queryDigits = query.filter(Char::isDigit)
+        val filtered = if (query.isEmpty()) {
+            allContacts
+        } else {
+            allContacts.filter { contact ->
+                contact.fullName.contains(query, ignoreCase = true) ||
+                    (queryDigits.isNotEmpty() && contact.phoneNumbers.any { it.number.filter(Char::isDigit).contains(queryDigits) })
+            }
+        }
+        (binding.cmList.adapter as? CmContactsAdapter)?.updateItems(filtered, query)
+    }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
@@ -90,23 +141,49 @@ class CmFragment(context: Context, attributeSet: AttributeSet) :
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onContactsUpdated(event: CmContactsUpdatedEvent) {
+        allContacts = CmContactStore.getAll()
         updateState()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onPairingStateChanged(event: CmPairingStateChangedEvent) {
+        if (!event.paired) {
+            allContacts = emptyList()
+        }
         updateState()
     }
 
     private fun updateState() {
         val paired = context.cmAuthStore.isPaired
+        val hasContacts = allContacts.isNotEmpty()
 
         binding.cmPairingHolder.beVisibleIf(!paired && !pairing)
         binding.cmPairingProgress.beVisibleIf(pairing)
-        // Batch 2 renders CmContactStore.getAll() into cmList; until then the
-        // paired state is just the placeholder.
-        binding.cmList.beGone()
-        binding.cmPlaceholder.beVisibleIf(paired)
+        binding.cmList.beVisibleIf(paired && hasContacts)
+        binding.cmPlaceholder.beVisibleIf(paired && !hasContacts)
+
+        if (paired && hasContacts) {
+            renderList()
+        }
+    }
+
+    private fun renderList() {
+        val adapter = binding.cmList.adapter as? CmContactsAdapter
+        if (adapter == null) {
+            binding.cmList.adapter = CmContactsAdapter(
+                activity = activity as SimpleActivity,
+                contacts = allContacts,
+                recyclerView = binding.cmList,
+                itemClick = {
+                    // Batch 3: open CmContactActivity
+                },
+            )
+            if (context.areSystemAnimationsEnabled) {
+                binding.cmList.scheduleLayoutAnimation()
+            }
+        } else {
+            adapter.updateItems(allContacts)
+        }
     }
 
     private fun pair() {
@@ -135,6 +212,7 @@ class CmFragment(context: Context, attributeSet: AttributeSet) :
                     binding.cmPairingCode.setText("")
                     activity.toast(activity.getString(R.string.cm_pairing_success, activity.cmAuthStore.userName.orEmpty()))
                     updateState()
+                    refreshFromServer()
                 }
             } catch (e: CmApiException) {
                 activity.runOnUiThread {

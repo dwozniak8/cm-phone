@@ -29,6 +29,7 @@ import org.fossify.commons.models.contacts.Contact
 import org.fossify.phone.BuildConfig
 import org.fossify.phone.R
 import org.fossify.phone.adapters.ViewPagerAdapter
+import org.fossify.phone.cm.CmSyncManager
 import org.fossify.phone.databinding.ActivityMainBinding
 import org.fossify.phone.dialogs.ChangeSortingDialog
 import org.fossify.phone.dialogs.FilterContactSourcesDialog
@@ -136,6 +137,8 @@ class MainActivity : SimpleActivity() {
             refreshItems(true)
         }
 
+        CmSyncManager.syncIfStale(this)
+
         val configFontSize = config.fontSize
         if (storedFontSize != configFontSize) {
             getAllFragments().forEach {
@@ -196,9 +199,10 @@ class MainActivity : SimpleActivity() {
         val currentFragment = getCurrentFragment()
         binding.mainMenu.requireToolbar().menu.apply {
             findItem(R.id.clear_call_history).isVisible = currentFragment == getRecentsFragment()
-            findItem(R.id.sort).isVisible = currentFragment != getRecentsFragment()
-            findItem(R.id.filter).isVisible = currentFragment != getRecentsFragment()
+            findItem(R.id.sort).isVisible = currentFragment == getContactsFragment()
+            findItem(R.id.filter).isVisible = currentFragment == getContactsFragment()
             findItem(R.id.create_new_contact).isVisible = currentFragment == getContactsFragment()
+            findItem(R.id.cm_update_database).isVisible = currentFragment == getCmFragment()
             findItem(R.id.change_view_type).isVisible = false
             findItem(R.id.column_count).isVisible = false
             findItem(R.id.more_apps_from_us).isVisible = !resources.getBoolean(R.bool.hide_google_relations)
@@ -227,6 +231,7 @@ class MainActivity : SimpleActivity() {
                     R.id.create_new_contact -> launchCreateNewContactIntent()
                     R.id.sort -> showSortingDialog(showCustomSorting = false)
                     R.id.filter -> showFilterDialog()
+                    R.id.cm_update_database -> getCmFragment()?.refreshFromServer()
                     R.id.more_apps_from_us -> launchMoreAppsFromUsIntent()
                     R.id.settings -> launchSettings()
                     R.id.change_view_type -> changeViewType()
