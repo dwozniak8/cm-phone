@@ -81,6 +81,11 @@ data class CreateContactRequest(
     val phoneNumbers: List<CmPhoneNumber> = emptyList(),
 )
 
+@Serializable
+data class AddNoteRequest(
+    val note: String,
+)
+
 /** Thrown by [CmApi] implementations on any non-success outcome. */
 class CmApiException(
     val statusCode: Int,

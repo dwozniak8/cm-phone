@@ -79,6 +79,17 @@ class HttpCmApi(
         )
     }
 
+    override fun addNote(contactId: String, note: String): CmContact {
+        val body = json.encodeToString(AddNoteRequest.serializer(), AddNoteRequest(note))
+        return request(
+            builder = Request.Builder()
+                .url(base.newBuilder().addPathSegments("contacts/$contactId/notes").build())
+                .post(body.toRequestBody(JSON_MEDIA_TYPE)),
+            authenticated = true,
+            deserializer = CmContact.serializer(),
+        )
+    }
+
     private fun <T> request(
         builder: Request.Builder,
         authenticated: Boolean,

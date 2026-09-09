@@ -49,6 +49,20 @@ class FakeCmApi : CmApi {
         return created
     }
 
+    override fun addNote(contactId: String, note: String): CmContact {
+        val index = contacts.indexOfFirst { it.id == contactId }
+        if (index == -1) {
+            throw CmApiException(statusCode = 404, message = "Unknown CM contact")
+        }
+
+        val updated = contacts[index].copy(
+            notes = contacts[index].notes + note,
+            updatedAt = System.currentTimeMillis(),
+        )
+        contacts[index] = updated
+        return updated
+    }
+
     companion object {
         private val VALID_CODE_LENGTH = 4..8
 

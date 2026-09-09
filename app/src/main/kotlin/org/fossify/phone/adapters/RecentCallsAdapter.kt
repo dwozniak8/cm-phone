@@ -1,6 +1,7 @@
 package org.fossify.phone.adapters
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.provider.CallLog.Calls
 import android.text.SpannableString
@@ -49,10 +50,14 @@ import org.fossify.commons.helpers.isNougatPlus
 import org.fossify.commons.models.contacts.Contact
 import org.fossify.commons.views.MyRecyclerView
 import org.fossify.phone.R
+import org.fossify.phone.activities.CmContactActivity
 import org.fossify.phone.activities.MainActivity
 import org.fossify.phone.activities.SimpleActivity
+import org.fossify.phone.cm.CmContactStore
 import org.fossify.phone.databinding.ItemRecentCallBinding
 import org.fossify.phone.databinding.ItemRecentsDateBinding
+import org.fossify.phone.dialogs.CmAddNoteDialog
+import org.fossify.phone.dialogs.CmSaveContactDialog
 import org.fossify.phone.dialogs.ShowGroupedCallsDialog
 import org.fossify.phone.extensions.areMultipleSIMsAvailable
 import org.fossify.phone.extensions.callContactWithSimWithConfirmationCheck
@@ -61,6 +66,7 @@ import org.fossify.phone.extensions.getDayCode
 import org.fossify.phone.extensions.startAddContactIntent
 import org.fossify.phone.extensions.startCallWithConfirmationCheck
 import org.fossify.phone.extensions.startContactDetailsIntent
+import org.fossify.phone.helpers.CM_CONTACT_ID
 import org.fossify.phone.helpers.RecentsHelper
 import org.fossify.phone.interfaces.RefreshItemsListener
 import org.fossify.phone.models.CallLogItem
@@ -75,7 +81,6 @@ class RecentCallsAdapter(
     private val showOverflowMenu: Boolean,
     private val itemDelete: (List<RecentCall>) -> Unit = {},
     itemClick: (Any) -> Unit,
-    val profileIconClick: ((Any) -> Unit)? = null
 ) : MyRecyclerViewListAdapter<CallLogItem>(activity, recyclerView, RecentCallsDiffCallback(), itemClick) {
 
     private lateinit var outgoingCallIcon: Drawable
@@ -462,6 +467,61 @@ class RecentCallsAdapter(
         selectedKeys.remove(callId)
     }
 
+    /**
+     * The compact CM actions menu, opened by tapping the avatar or the name
+     * (the "…" overflow keeps its full menu). Options adapt to whether the
+     * number is already a CM contact.
+     */
+    private fun showCmActionsPopup(anchor: View, call: RecentCall) {
+        if (call.isUnknownNumber) {
+            return
+        }
+        finishActMode()
+        val simpleActivity = activity as SimpleActivity
+        CmContactStore.ensureLoaded(simpleActivity)
+        val cmContact = CmContactStore.findByNumber(call.phoneNumber)
+        val systemContact = findContactByCall(call)
+
+        val contextTheme = ContextThemeWrapper(activity, activity.getPopupMenuTheme())
+        PopupMenu(contextTheme, anchor, Gravity.START).apply {
+            inflate(R.menu.menu_recent_cm_options)
+            menu.findItem(R.id.cm_action_save).isVisible = cmContact == null
+            menu.findItem(R.id.cm_action_open_details).isVisible = cmContact != null || systemContact != null
+
+            setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.cm_action_save -> {
+                        CmSaveContactDialog(simpleActivity, call.phoneNumber, prefillName = call.name)
+                    }
+
+                    R.id.cm_action_add_note -> {
+                        if (cmContact != null) {
+                            CmAddNoteDialog(simpleActivity, cmContact)
+                        } else {
+                            CmSaveContactDialog(simpleActivity, call.phoneNumber, prefillName = call.name, focusNote = true)
+                        }
+                    }
+
+                    R.id.cm_action_open_details -> {
+                        if (cmContact != null) {
+                            simpleActivity.startActivity(
+                                Intent(simpleActivity, CmContactActivity::class.java).putExtra(CM_CONTACT_ID, cmContact.id)
+                            )
+                        } else {
+                            launchContactDetailsIntent(systemContact)
+                        }
+                    }
+
+                    R.id.cm_action_call -> {
+                        executeItemMenuOperation(call.id) { callContact() }
+                    }
+                }
+                true
+            }
+            show()
+        }
+    }
+
     private inner class RecentCallViewHolder(val binding: ItemRecentCallBinding) : ViewHolder(binding.root) {
         fun bind(call: RecentCall) = bindView(
             item = call,
@@ -512,6 +572,16 @@ class RecentCallsAdapter(
                     setTextColor(textColor)
                     setTextSize(TypedValue.COMPLEX_UNIT_PX, currentFontSize)
                     isSelected = true
+
+                    if (refreshItemsListener != null && !call.isUnknownNumber) {
+                        setOnClickListener {
+                            if (!actModeCallback.isSelectable) showCmActionsPopup(it, call) else viewClicked(call)
+                        }
+                        setOnLongClickListener {
+                            viewLongClicked()
+                            true
+                        }
+                    }
                 }
 
                 itemRecentsDateTime.apply {
@@ -581,12 +651,12 @@ class RecentCallsAdapter(
                 SimpleContactsHelper(root.context).loadContactImage(call.photoUri, itemRecentsImage, call.name)
 
                 itemRecentsImage.apply {
-                    if (profileIconClick != null) {
+                    if (refreshItemsListener != null && !call.isUnknownNumber) {
                         setBackgroundResource(R.drawable.selector_clickable_circle)
 
                         setOnClickListener {
                             if (!actModeCallback.isSelectable) {
-                                profileIconClick.invoke(call)
+                                showCmActionsPopup(it, call)
                             } else {
                                 viewClicked(call)
                             }

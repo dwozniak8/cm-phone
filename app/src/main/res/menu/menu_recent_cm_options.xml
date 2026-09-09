@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/cm_action_save"
+        android:title="@string/cm_save_in_app" />
+    <item
+        android:id="@+id/cm_action_add_note"
+        android:title="@string/cm_add_note" />
+    <item
+        android:id="@+id/cm_action_open_details"
+        android:title="@string/cm_open_details" />
+    <item
+        android:id="@+id/cm_action_call"
+        android:title="@string/cm_call" />
+</menu>

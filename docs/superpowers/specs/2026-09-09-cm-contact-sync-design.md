@@ -143,12 +143,19 @@ Response: the created contact (same shape as list items).
 - (An earlier confirmation-dialog design, `CmNumberInUseDialog`, was dropped in
   favour of this inline treatment.)
 
-### Batch 6 — Call history "not in CM" icon + save modal
-- `RecentCallsAdapter`: trailing icon when `CmContactStore.findByNumber(number) == null`
-  and `!isUnknownNumber`.
-- Tap → `CmSaveContactDialog` (imię, nazwisko, notatka; phone read-only, prefilled).
-  Save → `CmApi.createContact` → optimistic `CmContactStore.upsert` + persist +
-  `CmContactsUpdatedEvent`; icon disappears.
+### Batch 6 — Call history CM actions menu
+- `RecentCallsAdapter`: tapping the **avatar or the name** opens a compact
+  `menu_recent_cm_options` popup (the "…" overflow keeps its full menu):
+  - **Zapisz w aplikacji** (only when not in CM) → `CmSaveContactDialog`
+    (imię, nazwisko, notatka; phone read-only, prefilled). Save →
+    `CmApi.createContact` → optimistic `CmContactStore.upsert` +
+    `CmContactsUpdatedEvent`.
+  - **Dopisz notatkę** → `CmAddNoteDialog` if in CM (`CmApi.addNote`, new
+    contract endpoint), otherwise `CmSaveContactDialog` focused on the note.
+  - **Otwórz szczegóły** → `CmContactActivity` if in CM, else the system
+    contact details (hidden when neither exists).
+  - **Zadzwoń** → normal call flow.
+- The old "not in CM" trailing icon was dropped in favour of this menu.
 
 ### Batch 7 — Cleanup
 - Strings + PL translations for every new string, ProGuard keep rules for
@@ -157,7 +164,7 @@ Response: the created contact (same shape as list items).
 
 ## Non-goals
 
-- Editing CM contacts from the app (only create).
+- Editing CM contacts from the app beyond create + append-note.
 - Property / client detail views (labels only).
 - Real-time push. Conflict resolution beyond "server list replaces local".
 - Multi-account on one device (pairing replaces any previous pairing).

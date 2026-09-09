@@ -17,15 +17,12 @@ import org.fossify.commons.helpers.SMT_PRIVATE
 import org.fossify.commons.helpers.ensureBackgroundThread
 import org.fossify.commons.models.contacts.Contact
 import org.fossify.phone.R
-import org.fossify.phone.activities.MainActivity
 import org.fossify.phone.activities.SimpleActivity
 import org.fossify.phone.adapters.RecentCallsAdapter
 import org.fossify.phone.databinding.FragmentRecentsBinding
 import org.fossify.phone.extensions.config
 import org.fossify.phone.extensions.runAfterAnimations
-import org.fossify.phone.extensions.startAddContactIntent
 import org.fossify.phone.extensions.startCallWithConfirmationCheck
-import org.fossify.phone.extensions.startContactDetailsIntent
 import org.fossify.phone.helpers.RecentsHelper
 import org.fossify.phone.interfaces.RefreshItemsListener
 import org.fossify.phone.models.CallLogItem
@@ -166,15 +163,6 @@ class RecentsFragment(
                     itemClick = {
                         val recentCall = it as RecentCall
                         activity?.startCallWithConfirmationCheck(recentCall.phoneNumber, recentCall.name)
-                    },
-                    profileIconClick = {
-                        val recentCall = it as RecentCall
-                        val contact = findContactByCall(recentCall)
-                        if (contact != null) {
-                            activity?.startContactDetailsIntent(contact)
-                        } else {
-                            activity?.startAddContactIntent(recentCall.phoneNumber)
-                        }
                     }
                 )
 
@@ -297,9 +285,5 @@ class RecentsFragment(
         }
 
         return callLog
-    }
-
-    private fun findContactByCall(recentCall: RecentCall): Contact? {
-        return (activity as MainActivity).cachedContacts.find { it.name == recentCall.name && it.doesHavePhoneNumber(recentCall.phoneNumber) }
     }
 }
