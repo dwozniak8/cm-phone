@@ -96,7 +96,7 @@
     <string name="cm_detail_clients">Powiązani klienci poszukujący</string>
     <string name="cm_section_title">%1$s (%2$d)</string>
     <string name="cm_contact_badge">Kontakt z aplikacji</string>
-    <string name="cm_dialer_check_hint">Sprawdź czy kontakt nie jest już zapisany w aplikacji</string>
+    <string name="cm_dialer_check_hint">Wprowadzany kontakt jest już w aplikacji.</string>
     <string name="cm_save_in_app">Zapisz w aplikacji</string>
     <string name="cm_add_note">Dopisz notatkę</string>
     <string name="cm_open_details">Otwórz szczegóły</string>

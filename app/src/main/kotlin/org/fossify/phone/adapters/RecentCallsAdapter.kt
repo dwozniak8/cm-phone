@@ -51,6 +51,8 @@ import org.fossify.commons.views.MyRecyclerView
 import org.fossify.phone.R
 import org.fossify.phone.activities.MainActivity
 import org.fossify.phone.activities.SimpleActivity
+import org.fossify.phone.cm.CmAvatar
+import org.fossify.phone.cm.CmContactStore
 import org.fossify.phone.databinding.ItemRecentCallBinding
 import org.fossify.phone.databinding.ItemRecentsDateBinding
 import org.fossify.phone.dialogs.CmContactActionsMenu
@@ -96,6 +98,7 @@ class RecentCallsAdapter(
         setupDragListener(true)
         setHasStableIds(true)
         (recyclerView.itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
+        CmContactStore.ensureLoaded(activity)
     }
 
     override fun getActionMenuId() = R.menu.cab_recent_calls
@@ -471,7 +474,13 @@ class RecentCallsAdapter(
             return
         }
         finishActMode()
-        CmContactActionsMenu.show(activity as SimpleActivity, anchor, call.phoneNumber, call.name) {
+        CmContactActionsMenu.show(
+            activity = activity as SimpleActivity,
+            anchor = anchor,
+            phoneNumber = call.phoneNumber,
+            displayName = call.name,
+            onChanged = { refreshItemsListener?.refreshItems() },
+        ) {
             executeItemMenuOperation(call.id) { callContact() }
         }
     }
@@ -490,7 +499,10 @@ class RecentCallsAdapter(
                 val currentFontSize = fontSize
                 itemRecentsHolder.isSelected = selectedKeys.contains(call.id)
                 val matchingContact = findContactByCall(call)
-                val name = matchingContact?.getNameToDisplay() ?: call.name
+                val cmContact = CmContactStore.findByNumber(call.phoneNumber)
+                val name = cmContact?.fullName?.takeIf { it.isNotBlank() }
+                    ?: matchingContact?.getNameToDisplay()
+                    ?: call.name
                 val formatPhoneNumbers = activity.config.formatPhoneNumbers
                 var nameToShow = if (name == call.phoneNumber && formatPhoneNumbers) {
                     SpannableString(name.formatPhoneNumber())
@@ -594,7 +606,13 @@ class RecentCallsAdapter(
                     itemRecentsSimId.text = call.simID.toString()
                 }
 
-                SimpleContactsHelper(root.context).loadContactImage(call.photoUri, itemRecentsImage, call.name)
+                if (cmContact != null) {
+                    CmAvatar.apply(itemRecentsImage, cmContact.id)
+                } else {
+                    itemRecentsImage.background = null
+                    itemRecentsImage.clearColorFilter()
+                    SimpleContactsHelper(root.context).loadContactImage(call.photoUri, itemRecentsImage, call.name)
+                }
 
                 val drawable = when (call.type) {
                     Calls.OUTGOING_TYPE -> outgoingCallIcon

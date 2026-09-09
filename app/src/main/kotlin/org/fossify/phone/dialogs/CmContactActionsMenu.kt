@@ -25,6 +25,7 @@ object CmContactActionsMenu {
         anchor: View,
         phoneNumber: String,
         displayName: String,
+        onChanged: (() -> Unit)? = null,
         onCall: () -> Unit,
     ) {
         CmContactStore.ensureLoaded(activity)
@@ -40,10 +41,10 @@ object CmContactActionsMenu {
             setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     R.id.cm_action_save ->
-                        CmSaveContactDialog(activity, phoneNumber, prefillName = displayName)
+                        CmSaveContactDialog(activity, phoneNumber, prefillName = displayName, onSaved = onChanged)
 
                     R.id.cm_action_add_note ->
-                        cmContact?.let { CmAddNoteDialog(activity, it) }
+                        cmContact?.let { CmAddNoteDialog(activity, it, onSaved = onChanged) }
 
                     R.id.cm_action_open_details ->
                         cmContact?.let {

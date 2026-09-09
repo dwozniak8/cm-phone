@@ -323,14 +323,15 @@ class DialpadActivity : SimpleActivity() {
         (binding.dialpadList.adapter as? ContactsAdapter)?.finishActMode()
 
         // CM contacts matching the input are shown first, in their own section
-        // above the system-contact results, with a reminder on top.
-        binding.dialpadCmHint.beVisibleIf(text.isNotEmpty())
+        // above the system-contact results. The reminder shows only when there
+        // actually is a CM match.
         CmContactStore.ensureLoaded(this)
         val cmMatches = if (text.isEmpty()) {
             emptyList()
         } else {
             CmContactStore.getAll().filter { cmContactMatchesInput(it, text) }
         }
+        binding.dialpadCmHint.beVisibleIf(cmMatches.isNotEmpty())
         renderCmMatches(cmMatches)
         val cmNumberKeys = cmMatches.flatMap { it.phoneNumbers }.map { it.number.toCmNumberKey() }.toHashSet()
 
