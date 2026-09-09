@@ -132,12 +132,16 @@ Response: the created contact (same shape as list items).
 - `CallActivity`: when `isCmContact`, a blinking **"Kontakt z aplikacji"** badge
   (`caller_cm_badge`) shows under the caller name.
 
-### Batch 5 — Dialer "already in CM" warning
-- Manual dial in `DialpadActivity` (`initCall` / string `startCallWithConfirmationCheck`):
-  if `CmContactStore.findByNumber(number) != null`, show `CmNumberInUseDialog`
-  ("Ten numer jest już w bazie CM (<imię>). Klient prawdopodobnie jest już
-  zaopiekowany. Zadzwonić mimo to?") before the normal flow. Scoped to dialpad
-  manual entry only — not calls from history/CM list.
+### Batch 5 — Dialer surfaces CM contacts
+- While typing in `DialpadActivity`, CM contacts matching the input (by digits or
+  T9 name) are listed **above** the system-contact results in their own section
+  (`dialpad_cm_list`, reusing `item_cm_contact`); a system contact whose number is
+  already a CM number is dropped from the lower list.
+- A reminder bar (`dialpad_cm_hint`, "Sprawdź czy kontakt nie jest już zapisany w
+  aplikacji") shows at the very top whenever there is input.
+- Tapping a CM row places the call (`startCallWithConfirmationCheck`).
+- (An earlier confirmation-dialog design, `CmNumberInUseDialog`, was dropped in
+  favour of this inline treatment.)
 
 ### Batch 6 — Call history "not in CM" icon + save modal
 - `RecentCallsAdapter`: trailing icon when `CmContactStore.findByNumber(number) == null`
