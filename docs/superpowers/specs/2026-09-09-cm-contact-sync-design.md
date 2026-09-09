@@ -114,10 +114,12 @@ Response: the created contact (same shape as list items).
 
 ### Batch 3 — CM contact detail
 - `CmContactActivity`: avatar + name + one call row per phone number (reuses
-  `startCallWithConfirmationCheck`, SIM selector when applicable). Below, read-only
-  sections, each hidden when empty and each rendered as a **list**: **Notatki**,
-  **Powiązane nieruchomości**, **Powiązani klienci poszukujący**. Every property /
-  prospect row has an "open in CM" button → `launchViewIntent` to
+  `startCallWithConfirmationCheck`, SIM selector when applicable). Below, three
+  read-only **collapsible** sections, each hidden when empty, each titled
+  `"<name> (<count>)"`: **Notatki**, **Powiązane nieruchomości**,
+  **Powiązani klienci poszukujący**. Opening one collapses the others; the first
+  non-empty section starts expanded. Every property / prospect row has an
+  "open in CM" button → `launchViewIntent` to
   `<cmAppUrl>/app/builds/<id>` or `<cmAppUrl>/app/clients/<id>`. Data from the
   local cache. `cmAppUrl` is a new Config value (default `https://app.crm.example`).
 - CM tab item click → `CmContactActivity`.

@@ -24,29 +24,38 @@
     <style name="CmDetailDivider">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1dp</item>
-        <item name="android:layout_marginTop">@dimen/normal_margin</item>
         <item name="android:background">?attr/colorControlHighlight</item>
     </style>
 
-    <style name="CmDetailLabel">
+    <style name="CmSectionHeader">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginStart">@dimen/activity_margin</item>
-        <item name="android:layout_marginTop">@dimen/normal_margin</item>
-        <item name="android:layout_marginEnd">@dimen/activity_margin</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:paddingStart">@dimen/activity_margin</item>
+        <item name="android:paddingEnd">@dimen/activity_margin</item>
+        <item name="android:paddingTop">@dimen/normal_margin</item>
+        <item name="android:paddingBottom">@dimen/normal_margin</item>
+    </style>
+
+    <style name="CmSectionTitle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:textSize">@dimen/small_text_size</item>
+        <item name="android:textSize">@dimen/normal_text_size</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="CmDetailValue">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginStart">@dimen/activity_margin</item>
-        <item name="android:layout_marginTop">@dimen/small_margin</item>
-        <item name="android:layout_marginEnd">@dimen/activity_margin</item>
-        <item name="android:textSize">@dimen/bigger_text_size</item>
-        <item name="android:textIsSelectable">true</item>
+    <style name="CmSectionChevron">
+        <item name="android:layout_width">@dimen/normal_icon_size</item>
+        <item name="android:layout_height">@dimen/normal_icon_size</item>
+        <item name="android:padding">@dimen/small_margin</item>
+        <item name="android:contentDescription">@null</item>
+        <item name="android:src">@drawable/ic_chevron_down_vector</item>
     </style>
 
 </resources>
