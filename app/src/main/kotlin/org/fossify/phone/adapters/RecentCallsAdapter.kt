@@ -11,6 +11,8 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -27,6 +29,8 @@ import org.fossify.commons.extensions.addLockedLabelIfNeeded
 import org.fossify.commons.extensions.adjustAlpha
 import org.fossify.commons.extensions.adjustForContrast
 import org.fossify.commons.extensions.applyColorFilter
+import org.fossify.commons.extensions.beGone
+import org.fossify.commons.extensions.beVisible
 import org.fossify.commons.extensions.beVisibleIf
 import org.fossify.commons.extensions.copyToClipboard
 import org.fossify.commons.extensions.formatDateOrTime
@@ -543,6 +547,7 @@ class RecentCallsAdapter(
                 }
 
                 itemRecentsDateTime.apply {
+                    beVisible()
                     text = if (refreshItemsListener == null) {
                         call.startTS.formatDateOrTime(context, hideTimeOnOtherDays = false, showCurrentYear = false, hideTodaysDate = false)
                     } else {
@@ -614,6 +619,21 @@ class RecentCallsAdapter(
                     SimpleContactsHelper(root.context).loadContactImage(call.photoUri, itemRecentsImage, call.name)
                 }
 
+                // CM rows replace the date/time line with note / property /
+                // prospect counts (a category with 0 is hidden).
+                itemRecentsCmStats.beVisibleIf(cmContact != null)
+                if (cmContact != null) {
+                    itemRecentsDateTime.beGone()
+                    itemRecentsDateTimeDurationSeparator.beGone()
+                    itemRecentsDuration.beGone()
+                    itemRecentsLocation.beGone()
+
+                    val statTextSize = currentFontSize * 0.8f
+                    bindCmStat(cmStatNotesHolder, cmStatNotesIcon, cmStatNotes, cmContact.notes.size, statTextSize)
+                    bindCmStat(cmStatPropertiesHolder, cmStatPropertiesIcon, cmStatProperties, cmContact.relatedProperties.size, statTextSize)
+                    bindCmStat(cmStatClientsHolder, cmStatClientsIcon, cmStatClients, cmContact.relatedClients.size, statTextSize)
+                }
+
                 val drawable = when (call.type) {
                     Calls.OUTGOING_TYPE -> outgoingCallIcon
                     Calls.MISSED_TYPE -> incomingMissedCallIcon
@@ -646,6 +666,16 @@ class RecentCallsAdapter(
                     true
                 }
             }
+        }
+    }
+
+    private fun bindCmStat(holder: View, icon: ImageView, text: TextView, count: Int, textSizePx: Float) {
+        holder.beVisibleIf(count > 0)
+        if (count > 0) {
+            icon.applyColorFilter(secondaryTextColor)
+            text.setTextColor(secondaryTextColor)
+            text.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizePx)
+            text.text = count.toString()
         }
     }
 

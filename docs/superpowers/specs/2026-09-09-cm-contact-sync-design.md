@@ -158,6 +158,9 @@ Response: the created contact (same shape as list items).
 - `RecentCallsAdapter`: the **whole row** (except the "…" overflow, which keeps
   its full menu) opens it; long-press still starts multi-select. The row handler
   is wired after `bindView` so it overrides `bindView`'s own root listener.
+- A call from a CM number shows the CM name + CM glyph avatar, and its second
+  line replaces the date/time with note / property / prospect counts
+  (`item_recents_cm_stats`; a category with 0 is hidden).
 - `DialpadActivity`: tapping a CM search result opens the same popup.
 - The old "not in CM" trailing icon and `profileIconClick` were dropped.
 
