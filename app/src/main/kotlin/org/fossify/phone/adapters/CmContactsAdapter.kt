@@ -6,9 +6,9 @@ import android.view.Menu
 import android.view.ViewGroup
 import org.fossify.commons.adapters.MyRecyclerViewAdapter
 import org.fossify.commons.extensions.highlightTextPart
-import org.fossify.commons.helpers.SimpleContactsHelper
 import org.fossify.commons.views.MyRecyclerView
 import org.fossify.phone.activities.SimpleActivity
+import org.fossify.phone.cm.CmAvatar
 import org.fossify.phone.cm.CmContact
 import org.fossify.phone.databinding.ItemCmContactBinding
 
@@ -24,7 +24,6 @@ class CmContactsAdapter(
 ) : MyRecyclerViewAdapter(activity, recyclerView, itemClick) {
 
     private var textToHighlight = ""
-    private val contactsHelper = SimpleContactsHelper(activity)
 
     override fun getActionMenuId() = 0
 
@@ -82,6 +81,6 @@ class CmContactsAdapter(
             setTextColor(textColor)
         }
 
-        contactsHelper.loadContactImage(contact.photoUrl.orEmpty(), binding.cmContactImage, displayName)
+        CmAvatar.apply(binding.cmContactImage, contact.id)
     }
 }

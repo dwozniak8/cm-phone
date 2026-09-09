@@ -38,7 +38,6 @@ import org.fossify.commons.extensions.value
 import org.fossify.commons.extensions.viewBinding
 import org.fossify.commons.helpers.ContactsHelper
 import org.fossify.commons.helpers.KeypadHelper
-import org.fossify.commons.helpers.SimpleContactsHelper
 import org.fossify.commons.helpers.LOWER_ALPHA_INT
 import org.fossify.commons.helpers.MyContactsContentProvider
 import org.fossify.commons.helpers.NavigationIcon
@@ -48,6 +47,7 @@ import org.fossify.commons.helpers.isOreoPlus
 import org.fossify.commons.models.contacts.Contact
 import org.fossify.phone.R
 import org.fossify.phone.adapters.ContactsAdapter
+import org.fossify.phone.cm.CmAvatar
 import org.fossify.phone.cm.CmContact
 import org.fossify.phone.cm.CmContactStore
 import org.fossify.phone.cm.toCmNumberKey
@@ -395,7 +395,6 @@ class DialpadActivity : SimpleActivity() {
             return
         }
 
-        val contactsHelper = SimpleContactsHelper(this)
         val textColor = getProperTextColor()
         matches.take(CM_DIALPAD_MAX_RESULTS).forEach { cmContact ->
             val row = ItemCmContactBinding.inflate(layoutInflater, holder, false)
@@ -404,7 +403,7 @@ class DialpadActivity : SimpleActivity() {
             row.cmContactName.setTextColor(textColor)
             row.cmContactNumber.text = cmContact.primaryNumber
             row.cmContactNumber.setTextColor(textColor)
-            contactsHelper.loadContactImage(cmContact.photoUrl.orEmpty(), row.cmContactImage, name)
+            CmAvatar.apply(row.cmContactImage, cmContact.id)
             row.root.setOnClickListener {
                 startCallWithConfirmationCheck(cmContact.primaryNumber, name)
                 clearInputWithDelay()

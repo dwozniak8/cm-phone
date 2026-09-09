@@ -16,9 +16,9 @@ import org.fossify.commons.extensions.toast
 import org.fossify.commons.extensions.updateTextColors
 import org.fossify.commons.extensions.viewBinding
 import org.fossify.commons.helpers.NavigationIcon
-import org.fossify.commons.helpers.SimpleContactsHelper
 import org.fossify.commons.helpers.ensureBackgroundThread
 import org.fossify.phone.R
+import org.fossify.phone.cm.CmAvatar
 import org.fossify.phone.cm.CmContact
 import org.fossify.phone.cm.CmContactStore
 import org.fossify.phone.cm.CmRef
@@ -80,7 +80,7 @@ class CmContactActivity : SimpleActivity() {
         val displayName = contact.fullName.ifBlank { contact.primaryNumber }
         binding.cmContactToolbar.title = displayName
         binding.cmContactName.text = displayName
-        SimpleContactsHelper(this).loadContactImage(contact.photoUrl.orEmpty(), binding.cmContactPhoto, displayName)
+        CmAvatar.apply(binding.cmContactPhoto, contact.id)
 
         buildPhoneNumberRows(contact, displayName)
 

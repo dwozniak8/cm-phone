@@ -40,7 +40,10 @@
                 android:layout_height="120dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/bigger_margin"
-                android:contentDescription="@null" />
+                android:contentDescription="@null"
+                android:padding="@dimen/big_margin"
+                android:scaleType="fitCenter"
+                tools:src="@drawable/ic_cm_contact_vector" />
 
             <org.fossify.commons.views.MyTextView
                 android:id="@+id/cm_contact_name"
