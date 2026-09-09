@@ -71,7 +71,7 @@ class FakeCmApi : CmApi {
                 id = "c1",
                 firstName = "Anna",
                 lastName = "Nowak",
-                phoneNumbers = listOf(CmPhoneNumber("+48600100200", "mobile")),
+                phoneNumbers = listOf(CmPhoneNumber("+48606951748", "mobile")),
                 notes = listOf(
                     "Zainteresowana mieszkaniem 2-pokojowym do 600 tys. Oddzwonić w piątek.",
                     "Ma zdolność kredytową potwierdzoną przez doradcę.",
