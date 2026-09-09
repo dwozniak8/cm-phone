@@ -91,6 +91,17 @@
     <string name="faq_2_text">Due to system restrictions, emergency calls can only be made through your system\'s default dialer or phone app. To ensure emergency calls work properly, you need to keep the system app installed and enabled.</string>
     <string name="faq_3_title">Why are some of my contacts missing from the app?</string>
     <string name="faq_3_text">Fossify Phone only displays contacts that have a phone number associated with them. Contacts without a phone number are not shown in the app.</string>
+    <!-- CM integration -->
+    <string name="cm_tab">CM</string>
+    <string name="cm_pairing_prompt">Enter the pairing code from the CM app</string>
+    <string name="cm_pairing_code_hint">Pairing code</string>
+    <string name="cm_pair_button">Pair</string>
+    <string name="cm_get_code">Tap here to see your code</string>
+    <string name="cm_pairing_success">Paired with %s</string>
+    <string name="cm_pairing_failed">Invalid pairing code</string>
+    <string name="cm_paired_empty">No CM contacts yet. Update the database.</string>
+    <string name="cm_update_database">Update database</string>
+
     <!--
         Haven't found some strings? There's more at
         https://github.com/FossifyOrg/Commons/tree/master/commons/src/main/res

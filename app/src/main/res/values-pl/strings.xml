@@ -77,4 +77,15 @@
     <string name="call_notification_channel">Status połączenia</string>
     <string name="call_notification_channel_high_priority">Status połączenia (wysoki priorytet)</string>
     <string name="calling_accounts">Konta telefoniczne</string>
+
+    <!-- Integracja CM -->
+    <string name="cm_tab">CM</string>
+    <string name="cm_pairing_prompt">Podaj kod parowania z aplikacji CM</string>
+    <string name="cm_pairing_code_hint">Kod parowania</string>
+    <string name="cm_pair_button">Sparuj</string>
+    <string name="cm_get_code">Kliknij tutaj, aby zobaczyć kod</string>
+    <string name="cm_pairing_success">Sparowano z %s</string>
+    <string name="cm_pairing_failed">Nieprawidłowy kod parowania</string>
+    <string name="cm_paired_empty">Brak kontaktów CM. Zaktualizuj bazę.</string>
+    <string name="cm_update_database">Zaktualizuj bazę</string>
 </resources>

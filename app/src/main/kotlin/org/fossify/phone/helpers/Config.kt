@@ -135,4 +135,17 @@ class Config(context: Context) : BaseConfig(context) {
     var alwaysShowFullscreen: Boolean
         get() = prefs.getBoolean(ALWAYS_SHOW_FULLSCREEN, false)
         set(alwaysShowFullscreen) = prefs.edit().putBoolean(ALWAYS_SHOW_FULLSCREEN, alwaysShowFullscreen).apply()
+
+    // CM integration. Blank base URL => the in-app FakeCmApi is used.
+    var cmBaseUrl: String
+        get() = prefs.getString(CM_BASE_URL, "")!!
+        set(value) = prefs.edit().putString(CM_BASE_URL, value).apply()
+
+    var cmPairingUrl: String
+        get() = prefs.getString(CM_PAIRING_URL, DEFAULT_CM_PAIRING_URL)!!
+        set(value) = prefs.edit().putString(CM_PAIRING_URL, value).apply()
+
+    var cmLastSyncTS: Long
+        get() = prefs.getLong(CM_LAST_SYNC_TS, 0L)
+        set(value) = prefs.edit().putLong(CM_LAST_SYNC_TS, value).apply()
 }

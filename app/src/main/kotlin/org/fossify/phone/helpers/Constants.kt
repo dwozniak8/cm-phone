@@ -20,6 +20,13 @@ const val DIALPAD_BEEPS = "dialpad_beeps"
 const val HIDE_DIALPAD_NUMBERS = "hide_dialpad_numbers"
 const val ALWAYS_SHOW_FULLSCREEN = "always_show_fullscreen"
 
+// CM integration
+const val CM_BASE_URL = "cm_base_url"
+const val CM_PAIRING_URL = "cm_pairing_url"
+const val CM_LAST_SYNC_TS = "cm_last_sync_ts"
+const val DEFAULT_CM_PAIRING_URL = "https://app.crm.example/devices"
+const val CM_SYNC_INTERVAL_MS = 4 * 60 * 60 * 1000L
+
 const val ALL_TABS_MASK = TAB_CONTACTS or TAB_FAVORITES or TAB_CALL_HISTORY
 
 val tabsList = arrayListOf(TAB_CONTACTS, TAB_FAVORITES, TAB_CALL_HISTORY)

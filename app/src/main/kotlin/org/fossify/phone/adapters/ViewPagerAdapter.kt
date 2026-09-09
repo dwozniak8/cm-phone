@@ -42,7 +42,7 @@ class ViewPagerAdapter(val activity: SimpleActivity) : PagerAdapter() {
         }
 
         if (showTabs and TAB_FAVORITES > 0) {
-            fragments.add(R.layout.fragment_favorites)
+            fragments.add(R.layout.fragment_cm)
         }
 
         if (showTabs and TAB_CALL_HISTORY > 0) {
