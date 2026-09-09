@@ -143,19 +143,23 @@ Response: the created contact (same shape as list items).
 - (An earlier confirmation-dialog design, `CmNumberInUseDialog`, was dropped in
   favour of this inline treatment.)
 
-### Batch 6 — Call history CM actions menu
-- `RecentCallsAdapter`: tapping the **avatar or the name** opens a compact
-  `menu_recent_cm_options` popup (the "…" overflow keeps its full menu):
-  - **Zapisz w aplikacji** (only when not in CM) → `CmSaveContactDialog`
-    (imię, nazwisko, notatka; phone read-only, prefilled). Save →
+### Batch 6 — CM actions menu (call history + dialer results)
+- Shared `CmContactActionsMenu.show(activity, anchor, number, name, onCall)` —
+  a compact `menu_recent_cm_options` popup:
+  - **Zapisz w aplikacji** — only when the number is *not* in CM →
+    `CmSaveContactDialog` (imię, nazwisko, notatka; phone read-only). Save →
     `CmApi.createContact` → optimistic `CmContactStore.upsert` +
     `CmContactsUpdatedEvent`.
-  - **Dopisz notatkę** → `CmAddNoteDialog` if in CM (`CmApi.addNote`, new
-    contract endpoint), otherwise `CmSaveContactDialog` focused on the note.
-  - **Otwórz szczegóły** → `CmContactActivity` if in CM, else the system
-    contact details (hidden when neither exists).
-  - **Zadzwoń** → normal call flow.
-- The old "not in CM" trailing icon was dropped in favour of this menu.
+  - **Dopisz notatkę** — only when *in* CM → `CmAddNoteDialog`
+    (`CmApi.addNote`, new contract endpoint).
+  - **Otwórz szczegóły** — only when *in* CM → `CmContactActivity`.
+  - **Zadzwoń** — always.
+  So a new number offers only Zapisz w aplikacji / Zadzwoń.
+- `RecentCallsAdapter`: the **whole row** (except the "…" overflow, which keeps
+  its full menu) opens it; long-press still starts multi-select. The row handler
+  is wired after `bindView` so it overrides `bindView`'s own root listener.
+- `DialpadActivity`: tapping a CM search result opens the same popup.
+- The old "not in CM" trailing icon and `profileIconClick` were dropped.
 
 ### Batch 7 — Cleanup
 - Strings + PL translations for every new string, ProGuard keep rules for

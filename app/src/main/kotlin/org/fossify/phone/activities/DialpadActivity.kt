@@ -53,6 +53,7 @@ import org.fossify.phone.cm.CmContactStore
 import org.fossify.phone.cm.toCmNumberKey
 import org.fossify.phone.databinding.ActivityDialpadBinding
 import org.fossify.phone.databinding.ItemCmContactBinding
+import org.fossify.phone.dialogs.CmContactActionsMenu
 import org.fossify.phone.extensions.addCharacter
 import org.fossify.phone.extensions.areMultipleSIMsAvailable
 import org.fossify.phone.extensions.boundingBox
@@ -404,9 +405,11 @@ class DialpadActivity : SimpleActivity() {
             row.cmContactNumber.text = cmContact.primaryNumber
             row.cmContactNumber.setTextColor(textColor)
             CmAvatar.apply(row.cmContactImage, cmContact.id)
-            row.root.setOnClickListener {
-                startCallWithConfirmationCheck(cmContact.primaryNumber, name)
-                clearInputWithDelay()
+            row.root.setOnClickListener { anchor ->
+                CmContactActionsMenu.show(this, anchor, cmContact.primaryNumber, name) {
+                    startCallWithConfirmationCheck(cmContact.primaryNumber, name)
+                    clearInputWithDelay()
+                }
             }
             holder.addView(row.root)
         }
