@@ -96,6 +96,8 @@
     <string name="cm_detail_clients">Powiązani klienci poszukujący</string>
     <string name="cm_section_title">%1$s (%2$d)</string>
     <string name="cm_contact_badge">Kontakt z aplikacji</string>
+    <string name="cm_number_in_use">Ten numer jest już w bazie CM (%s). Klient prawdopodobnie jest już zaopiekowany. Zadzwonić mimo to?</string>
+    <string name="cm_call_anyway">Zadzwoń mimo to</string>
     <string name="cm_open_in_cm">Otwórz w CM</string>
     <string name="cm_bullet">•</string>
 </resources>

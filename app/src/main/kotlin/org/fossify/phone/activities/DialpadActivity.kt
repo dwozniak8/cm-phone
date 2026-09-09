@@ -42,11 +42,14 @@ import org.fossify.commons.helpers.LOWER_ALPHA_INT
 import org.fossify.commons.helpers.MyContactsContentProvider
 import org.fossify.commons.helpers.NavigationIcon
 import org.fossify.commons.helpers.REQUEST_CODE_SET_DEFAULT_DIALER
+import org.fossify.commons.helpers.ensureBackgroundThread
 import org.fossify.commons.helpers.isOreoPlus
 import org.fossify.commons.models.contacts.Contact
 import org.fossify.phone.R
 import org.fossify.phone.adapters.ContactsAdapter
+import org.fossify.phone.cm.CmContactStore
 import org.fossify.phone.databinding.ActivityDialpadBinding
+import org.fossify.phone.dialogs.CmNumberInUseDialog
 import org.fossify.phone.extensions.addCharacter
 import org.fossify.phone.extensions.areMultipleSIMsAvailable
 import org.fossify.phone.extensions.boundingBox
@@ -145,6 +148,7 @@ class DialpadActivity : SimpleActivity() {
         setupOptionsMenu()
         speedDialValues = config.getSpeedDialValues()
         privateCursor = getMyContactsCursor(favoritesOnly = false, withPhoneNumbersOnly = true)
+        ensureBackgroundThread { CmContactStore.ensureLoaded(this) }
 
         toneGeneratorHelper = ToneGeneratorHelper(this, DIALPAD_TONE_LENGTH_MS)
 
@@ -361,8 +365,12 @@ class DialpadActivity : SimpleActivity() {
 
     private fun initCall(number: String = binding.dialpadInput.value, name: String? = null) {
         if (number.isNotEmpty()) {
-            startCallWithConfirmationCheck(number, name ?: number)
-            clearInputWithDelay()
+            val placeCall = {
+                startCallWithConfirmationCheck(number, name ?: number)
+                clearInputWithDelay()
+            }
+            // warn only for numbers typed on the dialpad, not speed dial
+            if (name == null) warnIfCmNumber(number, placeCall) else placeCall()
         } else {
             RecentsHelper(this).getRecentCalls(queryLimit = 1) {
                 val mostRecentNumber = it.firstOrNull()?.phoneNumber
@@ -378,14 +386,31 @@ class DialpadActivity : SimpleActivity() {
     private fun initCallWithSimSelector(): Boolean {
         val number = binding.dialpadInput.value
         return if (areMultipleSIMsAvailable() && number.isNotEmpty()) {
-            startCallWithConfirmationCheck(
-                recipient = number,
-                name = number,
-                forceSimSelector = true
-            )
+            warnIfCmNumber(number) {
+                startCallWithConfirmationCheck(
+                    recipient = number,
+                    name = number,
+                    forceSimSelector = true
+                )
+            }
             true
         } else {
             false
+        }
+    }
+
+    /**
+     * If the dialled number is already a CM contact, ask for confirmation before
+     * [proceed] (the client is probably already being handled). Otherwise calls
+     * [proceed] straight away.
+     */
+    private fun warnIfCmNumber(number: String, proceed: () -> Unit) {
+        CmContactStore.ensureLoaded(this)
+        val cmContact = CmContactStore.findByNumber(number)
+        if (cmContact != null) {
+            CmNumberInUseDialog(this, cmContact.fullName.ifBlank { number }, proceed)
+        } else {
+            proceed()
         }
     }
 
