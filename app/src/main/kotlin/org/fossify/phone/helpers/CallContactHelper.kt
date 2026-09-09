@@ -10,6 +10,8 @@ import org.fossify.commons.helpers.ContactsHelper
 import org.fossify.commons.helpers.MyContactsContentProvider
 import org.fossify.commons.helpers.ensureBackgroundThread
 import org.fossify.phone.R
+import org.fossify.phone.cm.CmContactStore
+import org.fossify.phone.cm.toCmNumberKey
 import org.fossify.phone.extensions.config
 import org.fossify.phone.extensions.isConference
 import org.fossify.phone.models.CallContact
@@ -71,6 +73,23 @@ fun getCallContact(context: Context, call: Call?, callback: (CallContact) -> Uni
                     }
                 } else {
                     callContact.name = callContact.number
+                }
+
+                // A CM contact wins over the system contact for the displayed name.
+                CmContactStore.ensureLoaded(context)
+                val cmContact = CmContactStore.findByNumber(number)
+                if (cmContact != null) {
+                    val cmName = cmContact.fullName
+                    if (cmName.isNotBlank()) {
+                        callContact.name = cmName
+                    }
+
+                    val cmLabel = cmContact.phoneNumbers
+                        .firstOrNull { it.number.toCmNumberKey() == number.toCmNumberKey() }
+                        ?.label
+                    if (!cmLabel.isNullOrBlank()) {
+                        callContact.numberLabel = cmLabel
+                    }
                 }
 
                 callback(callContact)
