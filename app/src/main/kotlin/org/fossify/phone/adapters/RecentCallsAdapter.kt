@@ -633,7 +633,10 @@ class RecentCallsAdapter(
                     itemRecentsLocation.beGone()
 
                     val statTextSize = currentFontSize * 0.8f
-                    bindCmStat(cmStatNotesHolder, cmStatNotesIcon, cmStatNotes, cmContact.notes.size, statTextSize)
+                    val totalNotes = cmContact.notes.size +
+                        cmContact.relatedProperties.sumOf { it.notes.size } +
+                        cmContact.relatedClients.sumOf { it.notes.size }
+                    bindCmStat(cmStatNotesHolder, cmStatNotesIcon, cmStatNotes, totalNotes, statTextSize)
                     bindCmStat(cmStatPropertiesHolder, cmStatPropertiesIcon, cmStatProperties, cmContact.relatedProperties.size, statTextSize)
                     bindCmStat(cmStatClientsHolder, cmStatClientsIcon, cmStatClients, cmContact.relatedClients.size, statTextSize)
                 }

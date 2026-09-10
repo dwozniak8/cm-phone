@@ -16,6 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/color_primary"
+            app:menu="@menu/menu_recent_cm_options"
             app:titleTextAppearance="@style/AppTheme.ActionBar.TitleTextStyle" />
 
     </org.fossify.commons.views.MyAppBarLayout>
@@ -65,113 +66,14 @@
                 android:layout_marginTop="@dimen/normal_margin"
                 android:orientation="vertical" />
 
+            <!-- one row per record: the contact first, then its related
+                 properties / clients. Filled by CmContactActivity. -->
             <LinearLayout
-                android:id="@+id/cm_contact_note_holder"
+                android:id="@+id/cm_contact_records"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone"
-                tools:visibility="visible">
-
-                <View style="@style/CmDetailDivider" />
-
-                <LinearLayout
-                    android:id="@+id/cm_contact_note_header"
-                    style="@style/CmSectionHeader">
-
-                    <org.fossify.commons.views.MyTextView
-                        android:id="@+id/cm_contact_note_label"
-                        style="@style/CmSectionTitle"
-                        tools:text="Notatki (3)" />
-
-                    <ImageView
-                        android:id="@+id/cm_contact_note_chevron"
-                        style="@style/CmSectionChevron" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/cm_contact_note_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/small_margin"
-                    android:orientation="vertical"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/cm_contact_property_holder"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone"
-                tools:visibility="visible">
-
-                <View style="@style/CmDetailDivider" />
-
-                <LinearLayout
-                    android:id="@+id/cm_contact_property_header"
-                    style="@style/CmSectionHeader">
-
-                    <org.fossify.commons.views.MyTextView
-                        android:id="@+id/cm_contact_property_label"
-                        style="@style/CmSectionTitle"
-                        tools:text="Powiązane nieruchomości (2)" />
-
-                    <ImageView
-                        android:id="@+id/cm_contact_property_chevron"
-                        style="@style/CmSectionChevron" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/cm_contact_property_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/small_margin"
-                    android:orientation="vertical"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/cm_contact_client_holder"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone"
-                tools:visibility="visible">
-
-                <View style="@style/CmDetailDivider" />
-
-                <LinearLayout
-                    android:id="@+id/cm_contact_client_header"
-                    style="@style/CmSectionHeader">
-
-                    <org.fossify.commons.views.MyTextView
-                        android:id="@+id/cm_contact_client_label"
-                        style="@style/CmSectionTitle"
-                        tools:text="Powiązani klienci poszukujący (1)" />
-
-                    <ImageView
-                        android:id="@+id/cm_contact_client_chevron"
-                        style="@style/CmSectionChevron" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/cm_contact_client_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/small_margin"
-                    android:orientation="vertical"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
-
-            </LinearLayout>
+                android:layout_marginTop="@dimen/normal_margin"
+                android:orientation="vertical" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

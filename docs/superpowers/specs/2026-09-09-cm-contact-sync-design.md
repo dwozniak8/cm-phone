@@ -118,14 +118,18 @@ Response: the created contact (same shape as list items).
 
 ### Batch 3 — CM contact detail
 - `CmContactActivity`: avatar + name + one call row per phone number (reuses
-  `startCallWithConfirmationCheck`, SIM selector when applicable). Below, three
-  read-only **collapsible** sections, each hidden when empty, each titled
-  `"<name> (<count>)"`: **Notatki**, **Powiązane nieruchomości**,
-  **Powiązani klienci poszukujący**. Opening one collapses the others; the first
-  non-empty section starts expanded. Every property / prospect row has an
-  "open in CM" button → `launchViewIntent` to
-  `<cmAppUrl>/app/builds/<id>` or `<cmAppUrl>/app/clients/<id>`. Data from the
-  local cache. `cmAppUrl` is a new Config value (default `https://app.crm.example`).
+  `startCallWithConfirmationCheck`, SIM selector when applicable). Below, a single
+  collapsible list of **records** — the contact first, then its related
+  properties / clients — each with a type icon on the left (person / house /
+  briefcase). Expanding a row shows that record's **notes** (or "Brak notatek");
+  opening one collapses the others; the first row (the contact) starts expanded.
+  Property / client rows carry an "open in CM" deep-link button →
+  `<cmAppUrl>/app/builds/<id>` · `<cmAppUrl>/app/clients/<id>`.
+- Toolbar overflow mirrors the call-history contact menu: **Dopisz notatkę**
+  (opens `CmAddNoteDialog`, refreshes on save) and **Zadzwoń**.
+- Per-record notes come from `CmRef.notes` (API: `DeviceRef.notes`, mapped from
+  each build's / client's `notesList`).
+- Data from the local cache. `cmAppUrl` is a Config value.
 - CM tab item click → `CmContactActivity`.
 
 ### Batch 4 — Incoming / ongoing call name

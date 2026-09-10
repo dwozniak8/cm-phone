@@ -61,15 +61,27 @@ class FakeCmApi : CmApi {
             throw CmApiException(statusCode = 404, message = "Unknown CM contact")
         }
 
-        if (target != null && target.type != NoteTargetType.CONTACT) {
-            // the fake model has nowhere to keep build / client notes; just accept it
-            return contacts[index]
-        }
+        val current = contacts[index]
+        val updated = when (target?.type) {
+            NoteTargetType.BUILD -> current.copy(
+                relatedProperties = current.relatedProperties.map {
+                    if (it.id == target.id) it.copy(notes = it.notes + note) else it
+                },
+                updatedAt = System.currentTimeMillis(),
+            )
 
-        val updated = contacts[index].copy(
-            notes = contacts[index].notes + note,
-            updatedAt = System.currentTimeMillis(),
-        )
+            NoteTargetType.CLIENT -> current.copy(
+                relatedClients = current.relatedClients.map {
+                    if (it.id == target.id) it.copy(notes = it.notes + note) else it
+                },
+                updatedAt = System.currentTimeMillis(),
+            )
+
+            else -> current.copy(
+                notes = current.notes + note,
+                updatedAt = System.currentTimeMillis(),
+            )
+        }
         contacts[index] = updated
         return updated
     }
@@ -89,11 +101,20 @@ class FakeCmApi : CmApi {
                     "Woli parter lub pierwsze piętro, bez windy odpada.",
                 ),
                 relatedProperties = listOf(
-                    CmRef("p9", "ul. Długa 4/12, Gdańsk"),
+                    CmRef(
+                        "p9", "ul. Długa 4/12, Gdańsk",
+                        notes = listOf(
+                            "Cena wywoławcza 780 tys., właściciel schodzi do 720.",
+                            "Klucze do odbioru w biurze, umówić oględziny.",
+                        ),
+                    ),
                     CmRef("p11", "ul. Podwale Staromiejskie 20/3, Gdańsk"),
                 ),
                 relatedClients = listOf(
-                    CmRef("cl3", "Biuro Nieruchomości XYZ"),
+                    CmRef(
+                        "cl3", "Biuro Nieruchomości XYZ",
+                        notes = listOf("Kontakt do agenta: Marek, tel. 600 300 300."),
+                    ),
                 ),
                 updatedAt = 1_725_800_000_000,
             ),

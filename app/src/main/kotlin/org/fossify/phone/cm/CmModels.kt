@@ -33,13 +33,15 @@ data class CmPhoneNumber(
 )
 
 /**
- * A lightweight reference to a related CM record (property or client). [id] is
- * used to build the deep link into the CM web app; [label] is what we show.
+ * A related CM record (property or client). [id] builds the deep link into the
+ * CM web app; [label] is what we show; [notes] are that record's own notes,
+ * shown when its row is expanded on the contact detail screen.
  */
 @Serializable
 data class CmRef(
     val id: String,
     val label: String,
+    val notes: List<String> = emptyList(),
 )
 
 @Serializable

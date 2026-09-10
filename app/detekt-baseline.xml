@@ -70,9 +70,6 @@
     <ID>MaxLineLength:CallManager.kt$CallManager.Companion$val newCall = calls.find { it.getStateCompat() == Call.STATE_CONNECTING || it.getStateCompat() == Call.STATE_DIALING }</ID>
     <ID>MaxLineLength:ChangeSortingDialog.kt$ChangeSortingDialog$class</ID>
     <ID>MaxLineLength:ChangeSortingDialog.kt$ChangeSortingDialog$if</ID>
-    <ID>MaxLineLength:CmContactActivity.kt$CmContactActivity$setSectionExpanded(binding.cmContactClientList, binding.cmContactClientChevron, expandedSection == Section.CLIENTS, animate)</ID>
-    <ID>MaxLineLength:CmContactActivity.kt$CmContactActivity$setSectionExpanded(binding.cmContactNoteList, binding.cmContactNoteChevron, expandedSection == Section.NOTES, animate)</ID>
-    <ID>MaxLineLength:CmContactActivity.kt$CmContactActivity$setSectionExpanded(binding.cmContactPropertyList, binding.cmContactPropertyChevron, expandedSection == Section.PROPERTIES, animate)</ID>
     <ID>MaxLineLength:CmFragment.kt$CmFragment$(queryDigits.isNotEmpty() &amp;&amp; contact.phoneNumbers.any { it.number.filter(Char::isDigit).contains(queryDigits) })</ID>
     <ID>MaxLineLength:ConferenceActivity.kt$ConferenceActivity$conferenceList.adapter = ConferenceCallsAdapter(this@ConferenceActivity, conferenceList, ArrayList(CallManager.getConferenceCalls())) {}</ID>
     <ID>MaxLineLength:ConferenceCallsAdapter.kt$ConferenceCallsAdapter$itemConferenceCallName.text = callContact.name.ifEmpty { itemView.context.getString(R.string.unknown_caller) }</ID>
@@ -150,6 +147,7 @@
     <ID>TooGenericExceptionCaught:SettingsActivity.kt$SettingsActivity$e: Exception</ID>
     <ID>TooManyFunctions:CallActivity.kt$CallActivity : SimpleActivity</ID>
     <ID>TooManyFunctions:CallManager.kt$CallManager$Companion</ID>
+    <ID>TooManyFunctions:CmContactActivity.kt$CmContactActivity : SimpleActivity</ID>
     <ID>TooManyFunctions:CmContactStore.kt$CmContactStore</ID>
     <ID>TooManyFunctions:CmContactsAdapter.kt$CmContactsAdapter : MyRecyclerViewAdapter</ID>
     <ID>TooManyFunctions:CmFragment.kt$CmFragment : MyViewPagerFragmentRefreshItemsListener</ID>
