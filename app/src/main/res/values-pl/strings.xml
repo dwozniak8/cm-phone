@@ -80,9 +80,9 @@
 
     <!-- Integracja CM -->
     <string name="cm_tab">CM</string>
-    <string name="cm_pairing_prompt">Podaj kod parowania i adres aplikacji CM</string>
+    <string name="cm_pairing_prompt">Podaj kod parowania i adres API CM</string>
     <string name="cm_pairing_code_hint">Kod parowania</string>
-    <string name="cm_pairing_service_url">Adres aplikacji CM</string>
+    <string name="cm_pairing_service_url">Adres serwera CM (API)</string>
     <string name="cm_pair_button">Sparuj</string>
     <string name="cm_autoconfig">Autokonfiguracja</string>
     <string name="cm_pairing_success">Sparowano z %s</string>

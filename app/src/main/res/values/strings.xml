@@ -93,9 +93,9 @@
     <string name="faq_3_text">Fossify Phone only displays contacts that have a phone number associated with them. Contacts without a phone number are not shown in the app.</string>
     <!-- CM integration -->
     <string name="cm_tab">CM</string>
-    <string name="cm_pairing_prompt">Enter the pairing code and the CM app address</string>
+    <string name="cm_pairing_prompt">Enter the pairing code and the CM API address</string>
     <string name="cm_pairing_code_hint">Pairing code</string>
-    <string name="cm_pairing_service_url">CM app address</string>
+    <string name="cm_pairing_service_url">CM API address</string>
     <string name="cm_pair_button">Pair</string>
     <string name="cm_autoconfig">Auto-configuration</string>
     <string name="cm_pairing_success">Paired with %s</string>
