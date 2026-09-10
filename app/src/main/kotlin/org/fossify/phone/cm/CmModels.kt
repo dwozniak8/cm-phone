@@ -85,9 +85,23 @@ data class CreateContactRequest(
     val phoneNumbers: List<CmPhoneNumber> = emptyList(),
 )
 
+object NoteTargetType {
+    const val CONTACT = "contact"
+    const val BUILD = "build" // a related property / "nieruchomość"
+    const val CLIENT = "client" // a related prospect / "klient poszukujący"
+}
+
+/** Where a note should land. `null` target ⇒ the contact itself. */
+@Serializable
+data class NoteTarget(
+    val type: String,
+    val id: String,
+)
+
 @Serializable
 data class AddNoteRequest(
     val note: String,
+    val target: NoteTarget? = null,
 )
 
 /** Error body shape: `{ "error": "UPPER_SNAKE_CASE_CODE" }`. */

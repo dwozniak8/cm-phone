@@ -125,6 +125,8 @@
     <string name="cm_contact_already_exists">This contact is already in the app</string>
     <string name="cm_invalid_phone_number">Invalid phone number</string>
     <string name="cm_note_added">Note added</string>
+    <string name="cm_note_target">Note is about</string>
+    <string name="cm_note_target_contact">Contact: %s</string>
     <string name="cm_open_in_cm">Open in CM</string>
     <string name="cm_bullet">•</string>
     <string name="cm_settings_unpair">Unpair device</string>

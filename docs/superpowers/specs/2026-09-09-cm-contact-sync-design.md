@@ -212,6 +212,15 @@ Response: the created contact (same shape as list items).
 - **Deferred (phase 2):** intent filter for `cmphone://pair?code=…&service=…` so
   "Autokonfiguracja" is one tap. Until then the link opens the pairing page in a
   browser and the code is copied by hand.
+- **Note targets:** "Dopisz notatkę" gets a dropdown — the contact, or one of its
+  related builds / clients. `AddNoteRequest` gains an optional
+  `target { type, id }`; `null` ⇒ the contact (current behaviour). Server support
+  requested in `docs/to-api-note-targets.md`; `HttpCmApi` sends it speculatively,
+  `FakeCmApi` accepts it. Dropdown hidden when the contact has no related records.
+- Local-dev plumbing: `android.permission.INTERNET`, a debug-only
+  `network_security_config` (cleartext ok), and a `ProxySelector` that connects
+  directly to loopback / RFC-1918 hosts (Wi-Fi proxy would otherwise break a
+  local API — surfaces as `ECONNREFUSED`). Failed requests log under tag `CmApi`.
 
 ## Non-goals
 

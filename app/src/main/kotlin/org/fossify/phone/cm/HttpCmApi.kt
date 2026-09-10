@@ -92,8 +92,8 @@ class HttpCmApi(
         )
     }
 
-    override fun addNote(contactId: String, note: String): CmContact {
-        val body = json.encodeToString(AddNoteRequest.serializer(), AddNoteRequest(note))
+    override fun addNote(contactId: String, note: String, target: NoteTarget?): CmContact {
+        val body = json.encodeToString(AddNoteRequest.serializer(), AddNoteRequest(note, target))
         return call(
             request = jsonPost("device/contacts/$contactId/notes", body),
             authenticated = true,

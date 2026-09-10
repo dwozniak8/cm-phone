@@ -112,6 +112,8 @@
     <string name="cm_contact_already_exists">Ten kontakt jest już w aplikacji</string>
     <string name="cm_invalid_phone_number">Nieprawidłowy numer telefonu</string>
     <string name="cm_note_added">Notatka dodana</string>
+    <string name="cm_note_target">Notatka dotyczy</string>
+    <string name="cm_note_target_contact">Kontakt: %s</string>
     <string name="cm_open_in_cm">Otwórz w CM</string>
     <string name="cm_bullet">•</string>
     <string name="cm_settings_unpair">Rozparuj urządzenie</string>

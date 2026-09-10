@@ -32,6 +32,10 @@ interface CmApi {
     /** Creates a new CM contact and returns it as stored server-side. */
     fun createContact(request: CreateContactRequest): CmContact
 
-    /** Appends a note to an existing CM contact and returns the updated contact. */
-    fun addNote(contactId: String, note: String): CmContact
+    /**
+     * Appends a note to an existing CM contact - or, when [target] is set, to one
+     * of that contact's related build / client records. Returns the (possibly
+     * unchanged) contact.
+     */
+    fun addNote(contactId: String, note: String, target: NoteTarget? = null): CmContact
 }

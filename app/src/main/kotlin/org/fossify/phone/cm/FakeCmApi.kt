@@ -55,10 +55,15 @@ class FakeCmApi : CmApi {
         return created
     }
 
-    override fun addNote(contactId: String, note: String): CmContact {
+    override fun addNote(contactId: String, note: String, target: NoteTarget?): CmContact {
         val index = contacts.indexOfFirst { it.id == contactId }
         if (index == -1) {
             throw CmApiException(statusCode = 404, message = "Unknown CM contact")
+        }
+
+        if (target != null && target.type != NoteTargetType.CONTACT) {
+            // the fake model has nowhere to keep build / client notes; just accept it
+            return contacts[index]
         }
 
         val updated = contacts[index].copy(
