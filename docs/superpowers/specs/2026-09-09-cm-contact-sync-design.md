@@ -1,6 +1,6 @@
 # CM contact sync — design
 
-**Status:** in implementation (batched, confirmed live in-app)
+**Status:** implemented (batches 1-7, verified live in-app)
 **Date:** 2026-09-09
 **Repo:** cm-phone (fork of Fossify Phone)
 
@@ -168,9 +168,19 @@ Response: the created contact (same shape as list items).
 - The old "not in CM" trailing icon and `profileIconClick` were dropped.
 
 ### Batch 7 — Cleanup
-- Strings + PL translations for every new string, ProGuard keep rules for
-  kotlinx.serialization models, lint/detekt baselines, `release` build green.
-- Settings: CM base URL + "Rozparuj urządzenie".
+- Settings gets a **CM** section: `cmBaseUrl` (blank ⇒ FakeCmApi), `cmAppUrl`,
+  and **"Rozparuj urządzenie"** (clears `CmAuthStore` + `CmContactStore`, resets
+  `cmLastSyncTS`, posts `CmPairingStateChangedEvent`). New `CmUrlDialog`.
+- `assembleFossRelease` (R8 + resource shrink) is green as-is — the repo's
+  existing generic kotlinx.serialization keep rules cover the CM models, and
+  okhttp / security-crypto ship their own consumer rules.
+- `detekt-baseline.xml` regenerated for the new package (style-only findings:
+  MaxLineLength, EmptyFunctionBlock on adapter no-ops, SwallowedException on the
+  `CmApiException` handlers, etc. - all consistent with the existing baseline).
+- `lintFossDebug` is green against the existing `lint-baseline.xml` (the CM code
+  adds only warnings, no new errors; the repo's `update-lint-baselines` bot owns
+  that file).
+- All new strings have PL translations.
 
 ## Non-goals
 

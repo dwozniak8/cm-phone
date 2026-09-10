@@ -110,4 +110,12 @@
     <string name="cm_note_added">Notatka dodana</string>
     <string name="cm_open_in_cm">Otwórz w CM</string>
     <string name="cm_bullet">•</string>
+    <string name="cm_settings_base_url">Adres serwera CM</string>
+    <string name="cm_settings_base_url_hint">Puste = wbudowane dane demonstracyjne zamiast prawdziwego serwera.</string>
+    <string name="cm_settings_app_url">Adres aplikacji CM</string>
+    <string name="cm_settings_app_url_hint">Używany do linków „Otwórz w CM” do nieruchomości i klientów.</string>
+    <string name="cm_settings_url_unset">Nie ustawiono (dane demo)</string>
+    <string name="cm_settings_unpair">Rozparuj urządzenie</string>
+    <string name="cm_settings_unpair_confirmation">Rozparować to urządzenie z CM i usunąć lokalną kopię kontaktów?</string>
+    <string name="cm_settings_unpaired">Urządzenie rozparowane</string>
 </resources>

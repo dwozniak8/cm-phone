@@ -123,6 +123,14 @@
     <string name="cm_note_added">Note added</string>
     <string name="cm_open_in_cm">Open in CM</string>
     <string name="cm_bullet">•</string>
+    <string name="cm_settings_base_url">CM server address</string>
+    <string name="cm_settings_base_url_hint">Leave empty to use the built-in demo data instead of a real server.</string>
+    <string name="cm_settings_app_url">CM web app address</string>
+    <string name="cm_settings_app_url_hint">Used to build the \"open in CM\" links to properties and prospects.</string>
+    <string name="cm_settings_url_unset">Not set (demo data)</string>
+    <string name="cm_settings_unpair">Unpair device</string>
+    <string name="cm_settings_unpair_confirmation">Unpair this device from CM and delete the local contact cache?</string>
+    <string name="cm_settings_unpaired">Device unpaired</string>
 
     <!--
         Haven't found some strings? There's more at

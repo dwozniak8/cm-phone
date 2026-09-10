@@ -9,6 +9,7 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import org.fossify.commons.activities.ManageBlockedNumbersActivity
 import org.fossify.commons.dialogs.ChangeDateTimeFormatDialog
+import org.fossify.commons.dialogs.ConfirmationDialog
 import org.fossify.commons.dialogs.FeatureLockedDialog
 import org.fossify.commons.dialogs.RadioGroupDialog
 import org.fossify.commons.extensions.addLockedLabelIfNeeded
@@ -38,13 +39,19 @@ import org.fossify.commons.helpers.isTiramisuPlus
 import org.fossify.commons.models.RadioItem
 import org.fossify.phone.R
 import org.fossify.phone.databinding.ActivitySettingsBinding
+import org.fossify.phone.cm.CmContactStore
+import org.fossify.phone.cm.CmPairingStateChangedEvent
+import org.fossify.phone.cm.cmAuthStore
+import org.fossify.phone.dialogs.CmUrlDialog
 import org.fossify.phone.dialogs.ExportCallHistoryDialog
 import org.fossify.phone.dialogs.ManageVisibleTabsDialog
 import org.fossify.phone.extensions.canLaunchAccountsConfiguration
 import org.fossify.phone.extensions.config
 import org.fossify.phone.extensions.launchAccountsConfiguration
+import org.fossify.phone.helpers.DEFAULT_CM_APP_URL
 import org.fossify.phone.helpers.RecentsHelper
 import org.fossify.phone.models.RecentCall
+import org.greenrobot.eventbus.EventBus
 import java.util.Locale
 import kotlin.system.exitProcess
 
@@ -117,6 +124,9 @@ class SettingsActivity : SimpleActivity() {
         setupAlwaysShowFullscreen()
         setupCallsExport()
         setupCallsImport()
+        setupCmBaseUrl()
+        setupCmAppUrl()
+        setupCmUnpair()
         updateTextColors(binding.settingsHolder)
 
         binding.apply {
@@ -126,7 +136,8 @@ class SettingsActivity : SimpleActivity() {
                 settingsStartupLabel,
                 settingsCallsLabel,
                 settingsDialpadSectionLabel,
-                settingsMigrationSectionLabel
+                settingsMigrationSectionLabel,
+                settingsCmSectionLabel
             ).forEach {
                 it.setTextColor(getProperPrimaryColor())
             }
@@ -402,6 +413,38 @@ class SettingsActivity : SimpleActivity() {
     private fun setupCallsImport() {
         binding.settingsImportCallsHolder.setOnClickListener {
             getContent.launch(IMPORT_CALL_HISTORY_FILE_TYPES.toTypedArray())
+        }
+    }
+
+    private fun setupCmBaseUrl() {
+        binding.settingsCmBaseUrl.text = config.cmBaseUrl.ifBlank { getString(R.string.cm_settings_url_unset) }
+        binding.settingsCmBaseUrlHolder.setOnClickListener {
+            CmUrlDialog(this, R.string.cm_settings_base_url, R.string.cm_settings_base_url_hint, config.cmBaseUrl) {
+                config.cmBaseUrl = it
+                binding.settingsCmBaseUrl.text = it.ifBlank { getString(R.string.cm_settings_url_unset) }
+            }
+        }
+    }
+
+    private fun setupCmAppUrl() {
+        binding.settingsCmAppUrl.text = config.cmAppUrl
+        binding.settingsCmAppUrlHolder.setOnClickListener {
+            CmUrlDialog(this, R.string.cm_settings_app_url, R.string.cm_settings_app_url_hint, config.cmAppUrl) {
+                config.cmAppUrl = it.ifBlank { DEFAULT_CM_APP_URL }
+                binding.settingsCmAppUrl.text = config.cmAppUrl
+            }
+        }
+    }
+
+    private fun setupCmUnpair() {
+        binding.settingsCmUnpairHolder.setOnClickListener {
+            ConfirmationDialog(this, getString(R.string.cm_settings_unpair_confirmation)) {
+                cmAuthStore.clear()
+                CmContactStore.clear(this)
+                config.cmLastSyncTS = 0L
+                EventBus.getDefault().post(CmPairingStateChangedEvent(paired = false))
+                toast(R.string.cm_settings_unpaired)
+            }
         }
     }
 
