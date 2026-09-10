@@ -102,8 +102,12 @@ Response: the created contact (same shape as list items).
   (`ViewPagerAdapter`, `MainActivity`). `FavoritesFragment` + `fragment_favorites.xml`
   removed; favorites-only menu items (view type, column count, custom sort) pruned.
 - Tab label → `cm_tab` ("CM").
-- Unpaired state: prompt "Podaj kod parowania" + code field + "Sparuj" +
-  "Kliknij tutaj, aby zobaczyć kod" (opens `cmPairingUrl`).
+- Unpaired state: pairing **code** + **CM app address** fields (the address is
+  pre-filled with `DEFAULT_CM_PAIRING_URL`), a "Sparuj" button and an
+  **"Autokonfiguracja"** link that just opens that address in a browser.
+  `pair()` runs against the typed address; the `PairResponse` carries `baseUrl`
+  / `appUrl`, which are written to `cmBaseUrl` / `cmAppUrl` on success - endpoints
+  are never configured by hand.
 - Paired state: empty list + placeholder (list rendering is Batch 2).
 
 ### Batch 2 — Sync + list
@@ -168,9 +172,10 @@ Response: the created contact (same shape as list items).
 - The old "not in CM" trailing icon and `profileIconClick` were dropped.
 
 ### Batch 7 — Cleanup
-- Settings gets a **CM** section: `cmBaseUrl` (blank ⇒ FakeCmApi), `cmAppUrl`,
-  and **"Rozparuj urządzenie"** (clears `CmAuthStore` + `CmContactStore`, resets
-  `cmLastSyncTS`, posts `CmPairingStateChangedEvent`). New `CmUrlDialog`.
+- Settings gets a **CM** section with just **"Rozparuj urządzenie"** (clears
+  `CmAuthStore` + `CmContactStore`, resets `cmLastSyncTS`, posts
+  `CmPairingStateChangedEvent`). Endpoint URLs are set on the pairing screen /
+  by the pairing response, not here.
 - `assembleFossRelease` (R8 + resource shrink) is green as-is — the repo's
   existing generic kotlinx.serialization keep rules cover the CM models, and
   okhttp / security-crypto ship their own consumer rules.

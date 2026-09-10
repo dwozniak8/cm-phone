@@ -494,52 +494,6 @@
                 android:text="@string/cm_tab" />
 
             <RelativeLayout
-                android:id="@+id/settings_cm_base_url_holder"
-                style="@style/SettingsHolderTextViewStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_cm_base_url_label"
-                    style="@style/SettingsTextLabelStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/cm_settings_base_url" />
-
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_cm_base_url"
-                    style="@style/SettingsTextValueStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/settings_cm_base_url_label"
-                    tools:text="https://app.crm.example" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/settings_cm_app_url_holder"
-                style="@style/SettingsHolderTextViewStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_cm_app_url_label"
-                    style="@style/SettingsTextLabelStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/cm_settings_app_url" />
-
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_cm_app_url"
-                    style="@style/SettingsTextValueStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/settings_cm_app_url_label"
-                    tools:text="https://app.crm.example" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
                 android:id="@+id/settings_cm_unpair_holder"
                 style="@style/SettingsHolderTextViewOneLinerStyle"
                 android:layout_width="match_parent"

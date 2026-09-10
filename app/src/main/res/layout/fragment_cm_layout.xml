@@ -63,6 +63,16 @@
                 android:maxLength="8"
                 android:textDirection="firstStrongLtr" />
 
+            <org.fossify.commons.views.MyEditText
+                android:id="@+id/cm_pairing_service_url"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_margin"
+                android:hint="@string/cm_pairing_service_url"
+                android:importantForAutofill="no"
+                android:inputType="textUri|textNoSuggestions"
+                android:textDirection="firstStrongLtr" />
+
             <org.fossify.commons.views.MyTextView
                 android:id="@+id/cm_pair_button"
                 android:layout_width="match_parent"
@@ -77,14 +87,14 @@
                 android:textStyle="bold" />
 
             <org.fossify.commons.views.MyTextView
-                android:id="@+id/cm_get_code"
+                android:id="@+id/cm_autoconfig"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/activity_margin"
                 android:background="@drawable/ripple_all_corners"
                 android:gravity="center"
                 android:padding="@dimen/activity_margin"
-                android:text="@string/cm_get_code" />
+                android:text="@string/cm_autoconfig" />
 
             <ProgressBar
                 android:id="@+id/cm_pairing_progress"

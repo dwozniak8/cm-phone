@@ -42,13 +42,11 @@ import org.fossify.phone.databinding.ActivitySettingsBinding
 import org.fossify.phone.cm.CmContactStore
 import org.fossify.phone.cm.CmPairingStateChangedEvent
 import org.fossify.phone.cm.cmAuthStore
-import org.fossify.phone.dialogs.CmUrlDialog
 import org.fossify.phone.dialogs.ExportCallHistoryDialog
 import org.fossify.phone.dialogs.ManageVisibleTabsDialog
 import org.fossify.phone.extensions.canLaunchAccountsConfiguration
 import org.fossify.phone.extensions.config
 import org.fossify.phone.extensions.launchAccountsConfiguration
-import org.fossify.phone.helpers.DEFAULT_CM_APP_URL
 import org.fossify.phone.helpers.RecentsHelper
 import org.fossify.phone.models.RecentCall
 import org.greenrobot.eventbus.EventBus
@@ -124,8 +122,6 @@ class SettingsActivity : SimpleActivity() {
         setupAlwaysShowFullscreen()
         setupCallsExport()
         setupCallsImport()
-        setupCmBaseUrl()
-        setupCmAppUrl()
         setupCmUnpair()
         updateTextColors(binding.settingsHolder)
 
@@ -413,26 +409,6 @@ class SettingsActivity : SimpleActivity() {
     private fun setupCallsImport() {
         binding.settingsImportCallsHolder.setOnClickListener {
             getContent.launch(IMPORT_CALL_HISTORY_FILE_TYPES.toTypedArray())
-        }
-    }
-
-    private fun setupCmBaseUrl() {
-        binding.settingsCmBaseUrl.text = config.cmBaseUrl.ifBlank { getString(R.string.cm_settings_url_unset) }
-        binding.settingsCmBaseUrlHolder.setOnClickListener {
-            CmUrlDialog(this, R.string.cm_settings_base_url, R.string.cm_settings_base_url_hint, config.cmBaseUrl) {
-                config.cmBaseUrl = it
-                binding.settingsCmBaseUrl.text = it.ifBlank { getString(R.string.cm_settings_url_unset) }
-            }
-        }
-    }
-
-    private fun setupCmAppUrl() {
-        binding.settingsCmAppUrl.text = config.cmAppUrl
-        binding.settingsCmAppUrlHolder.setOnClickListener {
-            CmUrlDialog(this, R.string.cm_settings_app_url, R.string.cm_settings_app_url_hint, config.cmAppUrl) {
-                config.cmAppUrl = it.ifBlank { DEFAULT_CM_APP_URL }
-                binding.settingsCmAppUrl.text = config.cmAppUrl
-            }
         }
     }
 

@@ -4,27 +4,28 @@ import android.content.Context
 import org.fossify.phone.extensions.config
 
 /**
- * Picks the right [CmApi] for the current configuration: the in-app [FakeCmApi]
- * when no CM base URL is set (default / debug), otherwise a real [HttpCmApi].
+ * Picks the right [CmApi] for a given base URL: the in-app [FakeCmApi] when the
+ * URL is blank or "mock" (default / demo), otherwise a real [HttpCmApi].
+ *
+ * Pairing calls pass the address the user typed on the pairing screen; every
+ * other call uses [org.fossify.phone.helpers.Config.cmBaseUrl], which the
+ * pairing response fills in.
  */
 object CmClient {
 
     private val fake by lazy { FakeCmApi() }
 
-    fun getApi(context: Context): CmApi {
-        val baseUrl = context.config.cmBaseUrl.trim()
-        return if (baseUrl.isEmpty() || baseUrl.equals("mock", ignoreCase = true)) {
+    fun getApi(context: Context, baseUrl: String = context.config.cmBaseUrl): CmApi {
+        val url = baseUrl.trim()
+        return if (isFakeUrl(url)) {
             fake
         } else {
             HttpCmApi(
-                baseUrl = baseUrl,
+                baseUrl = url,
                 accessTokenProvider = { context.cmAuthStore.accessToken },
             )
         }
     }
 
-    fun isUsingFake(context: Context): Boolean {
-        val baseUrl = context.config.cmBaseUrl.trim()
-        return baseUrl.isEmpty() || baseUrl.equals("mock", ignoreCase = true)
-    }
+    private fun isFakeUrl(url: String): Boolean = url.isEmpty() || url.equals("mock", ignoreCase = true)
 }

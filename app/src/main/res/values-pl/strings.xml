@@ -80,10 +80,11 @@
 
     <!-- Integracja CM -->
     <string name="cm_tab">CM</string>
-    <string name="cm_pairing_prompt">Podaj kod parowania z aplikacji CM</string>
+    <string name="cm_pairing_prompt">Podaj kod parowania i adres aplikacji CM</string>
     <string name="cm_pairing_code_hint">Kod parowania</string>
+    <string name="cm_pairing_service_url">Adres aplikacji CM</string>
     <string name="cm_pair_button">Sparuj</string>
-    <string name="cm_get_code">Kliknij tutaj, aby zobaczyć kod</string>
+    <string name="cm_autoconfig">Autokonfiguracja</string>
     <string name="cm_pairing_success">Sparowano z %s</string>
     <string name="cm_pairing_failed">Nieprawidłowy kod parowania</string>
     <string name="cm_paired_empty">Brak kontaktów CM. Kliknij, aby zaktualizować bazę.</string>
@@ -110,11 +111,6 @@
     <string name="cm_note_added">Notatka dodana</string>
     <string name="cm_open_in_cm">Otwórz w CM</string>
     <string name="cm_bullet">•</string>
-    <string name="cm_settings_base_url">Adres serwera CM</string>
-    <string name="cm_settings_base_url_hint">Puste = wbudowane dane demonstracyjne zamiast prawdziwego serwera.</string>
-    <string name="cm_settings_app_url">Adres aplikacji CM</string>
-    <string name="cm_settings_app_url_hint">Używany do linków „Otwórz w CM” do nieruchomości i klientów.</string>
-    <string name="cm_settings_url_unset">Nie ustawiono (dane demo)</string>
     <string name="cm_settings_unpair">Rozparuj urządzenie</string>
     <string name="cm_settings_unpair_confirmation">Rozparować to urządzenie z CM i usunąć lokalną kopię kontaktów?</string>
     <string name="cm_settings_unpaired">Urządzenie rozparowane</string>

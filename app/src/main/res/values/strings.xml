@@ -93,10 +93,11 @@
     <string name="faq_3_text">Fossify Phone only displays contacts that have a phone number associated with them. Contacts without a phone number are not shown in the app.</string>
     <!-- CM integration -->
     <string name="cm_tab">CM</string>
-    <string name="cm_pairing_prompt">Enter the pairing code from the CM app</string>
+    <string name="cm_pairing_prompt">Enter the pairing code and the CM app address</string>
     <string name="cm_pairing_code_hint">Pairing code</string>
+    <string name="cm_pairing_service_url">CM app address</string>
     <string name="cm_pair_button">Pair</string>
-    <string name="cm_get_code">Tap here to see your code</string>
+    <string name="cm_autoconfig">Auto-configuration</string>
     <string name="cm_pairing_success">Paired with %s</string>
     <string name="cm_pairing_failed">Invalid pairing code</string>
     <string name="cm_paired_empty">No CM contacts yet. Tap to update the database.</string>
@@ -123,11 +124,6 @@
     <string name="cm_note_added">Note added</string>
     <string name="cm_open_in_cm">Open in CM</string>
     <string name="cm_bullet">•</string>
-    <string name="cm_settings_base_url">CM server address</string>
-    <string name="cm_settings_base_url_hint">Leave empty to use the built-in demo data instead of a real server.</string>
-    <string name="cm_settings_app_url">CM web app address</string>
-    <string name="cm_settings_app_url_hint">Used to build the \"open in CM\" links to properties and prospects.</string>
-    <string name="cm_settings_url_unset">Not set (demo data)</string>
     <string name="cm_settings_unpair">Unpair device</string>
     <string name="cm_settings_unpair_confirmation">Unpair this device from CM and delete the local contact cache?</string>
     <string name="cm_settings_unpaired">Device unpaired</string>

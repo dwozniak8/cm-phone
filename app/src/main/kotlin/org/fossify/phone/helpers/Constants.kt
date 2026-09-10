@@ -25,7 +25,8 @@ const val CM_BASE_URL = "cm_base_url"
 const val CM_PAIRING_URL = "cm_pairing_url"
 const val CM_APP_URL = "cm_app_url"
 const val CM_LAST_SYNC_TS = "cm_last_sync_ts"
-const val DEFAULT_CM_PAIRING_URL = "https://app.crm.example/devices"
+// example CM service address, pre-filled on the pairing screen (replace later)
+const val DEFAULT_CM_PAIRING_URL = "https://app.crm.example"
 const val DEFAULT_CM_APP_URL = "https://app.crm.example"
 const val CM_SYNC_INTERVAL_MS = 4 * 60 * 60 * 1000L
 const val CM_CONTACT_ID = "cm_contact_id"

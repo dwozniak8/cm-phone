@@ -59,10 +59,11 @@ class CmFragment(context: Context, attributeSet: AttributeSet) :
     }
 
     override fun setupFragment() {
+        binding.cmPairingServiceUrl.setText(context.config.cmPairingUrl)
         binding.cmPairButton.setOnClickListener { pair() }
-        binding.cmGetCode.apply {
+        binding.cmAutoconfig.apply {
             underlineText()
-            setOnClickListener { activity?.launchViewIntent(activity!!.config.cmPairingUrl) }
+            setOnClickListener { openAutoConfig() }
         }
         binding.cmPlaceholder.setOnClickListener {
             if (context.cmAuthStore.isPaired) refreshFromServer()
@@ -71,6 +72,12 @@ class CmFragment(context: Context, attributeSet: AttributeSet) :
         CmContactStore.ensureLoaded(context)
         allContacts = CmContactStore.getAll()
         updateState()
+    }
+
+    private fun openAutoConfig() {
+        val activity = activity ?: return
+        val serviceUrl = binding.cmPairingServiceUrl.value.trim().ifBlank { activity.config.cmPairingUrl }
+        activity.launchViewIntent(serviceUrl)
     }
 
     override fun onAttachedToWindow() {
@@ -83,8 +90,9 @@ class CmFragment(context: Context, attributeSet: AttributeSet) :
     override fun setupColors(textColor: Int, primaryColor: Int, properPrimaryColor: Int) {
         binding.cmPairingPrompt.setTextColor(textColor)
         binding.cmPairingCode.setTextColor(textColor)
+        binding.cmPairingServiceUrl.setTextColor(textColor)
         binding.cmPlaceholder.setTextColor(textColor)
-        binding.cmGetCode.setTextColor(properPrimaryColor)
+        binding.cmAutoconfig.setTextColor(properPrimaryColor)
 
         binding.cmPairButton.background?.applyColorFilter(properPrimaryColor)
         binding.cmPairButton.setTextColor(properPrimaryColor.getContrastColor())
@@ -203,13 +211,20 @@ class CmFragment(context: Context, attributeSet: AttributeSet) :
         }
 
         val activity = activity ?: return
+        val serviceUrl = binding.cmPairingServiceUrl.value.trim()
+        activity.config.cmPairingUrl = serviceUrl
+
         pairing = true
         binding.cmPairButton.beGone()
         updateState()
 
         ensureBackgroundThread {
             try {
-                val response = CmClient.getApi(activity).pair(code)
+                // pair against the address the user typed; the response tells us
+                // which endpoints to use from now on.
+                val response = CmClient.getApi(activity, serviceUrl).pair(code)
+                activity.config.cmBaseUrl = response.baseUrl?.takeIf { it.isNotBlank() } ?: serviceUrl
+                response.appUrl?.takeIf { it.isNotBlank() }?.let { activity.config.cmAppUrl = it }
                 activity.cmAuthStore.save(response)
                 EventBus.getDefault().post(CmPairingStateChangedEvent(paired = true))
 

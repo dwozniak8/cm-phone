@@ -59,6 +59,10 @@ data class PairResponse(
     val refreshToken: String? = null,
     @SerialName("expiresInSec") val expiresInSec: Long = 0L,
     val user: CmUser? = null,
+    // endpoints the app should use from now on - the pairing service resolves
+    // and returns them, so they are not configured by hand.
+    val baseUrl: String? = null,
+    val appUrl: String? = null,
 )
 
 @Serializable

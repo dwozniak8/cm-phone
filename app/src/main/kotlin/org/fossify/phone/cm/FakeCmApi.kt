@@ -20,6 +20,8 @@ class FakeCmApi : CmApi {
             refreshToken = "fake-refresh-token",
             expiresInSec = 3600,
             user = CmUser(id = "u-fake", name = "Konto testowe CM"),
+            baseUrl = "mock",
+            appUrl = "https://app.crm.example",
         )
     }
 
