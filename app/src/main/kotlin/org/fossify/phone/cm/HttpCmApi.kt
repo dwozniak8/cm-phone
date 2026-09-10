@@ -10,6 +10,11 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
+import java.net.InetAddress
+import java.net.Proxy
+import java.net.ProxySelector
+import java.net.SocketAddress
+import java.net.URI
 import java.util.concurrent.TimeUnit
 
 /**
@@ -34,6 +39,8 @@ class HttpCmApi(
     private val client = OkHttpClient.Builder()
         .connectTimeout(CONNECT_TIMEOUT_SEC, TimeUnit.SECONDS)
         .readTimeout(READ_TIMEOUT_SEC, TimeUnit.SECONDS)
+        // never route loopback / LAN addresses through a system Wi-Fi proxy
+        .proxySelector(LocalBypassProxySelector)
         .build()
 
     private val json = Json {
@@ -194,5 +201,36 @@ class HttpCmApi(
         private const val HTTP_UNAUTHORIZED = 401
         private const val NETWORK_ERROR = -1
         private val JSON_MEDIA_TYPE = "application/json; charset=utf-8".toMediaType()
+    }
+
+    /**
+     * Delegates to the system proxy, except for `localhost` / loopback / private
+     * (RFC 1918) / link-local hosts, which always connect directly. Android
+     * browsers do this implicitly; OkHttp does not, which breaks talking to a CM
+     * API on the dev machine when a Wi-Fi proxy is configured.
+     */
+    private object LocalBypassProxySelector : ProxySelector() {
+        private val direct = listOf(Proxy.NO_PROXY)
+        private val systemDefault: ProxySelector? = getDefault()
+
+        override fun select(uri: URI): List<Proxy> {
+            val host = uri.host ?: return direct
+            return if (isDirect(host)) direct else systemDefault?.select(uri) ?: direct
+        }
+
+        override fun connectFailed(uri: URI, sa: SocketAddress, ioe: IOException) {
+            systemDefault?.connectFailed(uri, sa, ioe)
+        }
+
+        private fun isDirect(host: String): Boolean {
+            if (host.equals("localhost", ignoreCase = true)) return true
+            return try {
+                InetAddress.getByName(host).run {
+                    isLoopbackAddress || isAnyLocalAddress || isLinkLocalAddress || isSiteLocalAddress
+                }
+            } catch (e: Exception) {
+                false
+            }
+        }
     }
 }

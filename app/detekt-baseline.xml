@@ -137,6 +137,7 @@
     <ID>SwallowedException:FastScrollerView.kt$e: IndexOutOfBoundsException</ID>
     <ID>SwallowedException:HttpCmApi.kt$HttpCmApi$e: CmApiException</ID>
     <ID>SwallowedException:HttpCmApi.kt$HttpCmApi$e: Exception</ID>
+    <ID>SwallowedException:HttpCmApi.kt$HttpCmApi.LocalBypassProxySelector$e: Exception</ID>
     <ID>ThrowsCount:HttpCmApi.kt$HttpCmApi$private fun &lt;T&gt; execute( request: Request, deserializer: DeserializationStrategy&lt;T&gt;?, allowRefresh: Boolean, ): T</ID>
     <ID>TooGenericExceptionCaught:CallActivity.kt$CallActivity$e: Exception</ID>
     <ID>TooGenericExceptionCaught:CallContactHelper.kt$e: NullPointerException</ID>
@@ -146,6 +147,7 @@
     <ID>TooGenericExceptionCaught:FastScrollerView.kt$e: IndexOutOfBoundsException</ID>
     <ID>TooGenericExceptionCaught:HttpCmApi.kt$HttpCmApi$e: Exception</ID>
     <ID>TooGenericExceptionCaught:HttpCmApi.kt$HttpCmApi$e: RuntimeException</ID>
+    <ID>TooGenericExceptionCaught:HttpCmApi.kt$HttpCmApi.LocalBypassProxySelector$e: Exception</ID>
     <ID>TooGenericExceptionCaught:SettingsActivity.kt$SettingsActivity$e: Exception</ID>
     <ID>TooManyFunctions:CallActivity.kt$CallActivity : SimpleActivity</ID>
     <ID>TooManyFunctions:CallManager.kt$CallManager$Companion</ID>
