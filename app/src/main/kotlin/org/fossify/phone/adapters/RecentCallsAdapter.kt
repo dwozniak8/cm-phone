@@ -473,6 +473,7 @@ class RecentCallsAdapter(
      * The compact CM actions menu, opened by tapping anywhere on the row except
      * the "…" overflow (which keeps its full menu).
      */
+    @SuppressLint("NotifyDataSetChanged")
     private fun showCmActionsPopup(anchor: View, call: RecentCall) {
         if (call.isUnknownNumber) {
             return
@@ -483,7 +484,12 @@ class RecentCallsAdapter(
             anchor = anchor,
             phoneNumber = call.phoneNumber,
             displayName = call.name,
-            onChanged = { refreshItemsListener?.refreshItems() },
+            // the RecentCall rows are unchanged, so DiffUtil won't re-bind them
+            // for a new CM match - force it, then reload the log in the background
+            onChanged = {
+                notifyDataSetChanged()
+                refreshItemsListener?.refreshItems()
+            },
         ) {
             executeItemMenuOperation(call.id) { callContact() }
         }

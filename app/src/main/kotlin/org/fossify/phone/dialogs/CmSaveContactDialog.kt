@@ -76,7 +76,14 @@ class CmSaveContactDialog(
                         phoneNumbers = listOf(CmPhoneNumber(phoneNumber)),
                     )
                 )
-                CmContactStore.upsert(activity, created)
+                // keep the dialled number on the cached copy even if the API
+                // response omits phoneNumbers, so offline lookups match at once
+                val cached = if (created.phoneNumbers.isEmpty()) {
+                    created.copy(phoneNumbers = listOf(CmPhoneNumber(phoneNumber)))
+                } else {
+                    created
+                }
+                CmContactStore.upsert(activity, cached)
                 EventBus.getDefault().post(CmContactsUpdatedEvent())
                 activity.runOnUiThread {
                     activity.toast(R.string.cm_saved)
