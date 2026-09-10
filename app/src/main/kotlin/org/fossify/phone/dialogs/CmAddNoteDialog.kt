@@ -1,15 +1,18 @@
 package org.fossify.phone.dialogs
 
+import android.widget.LinearLayout
+import android.widget.ScrollView
 import androidx.appcompat.app.AlertDialog
-import org.fossify.commons.dialogs.RadioGroupDialog
+import androidx.core.content.ContextCompat
+import org.fossify.commons.extensions.applyColorFilter
 import org.fossify.commons.extensions.beVisible
 import org.fossify.commons.extensions.getAlertDialogBuilder
+import org.fossify.commons.extensions.getProperTextColor
 import org.fossify.commons.extensions.setupDialogStuff
 import org.fossify.commons.extensions.showKeyboard
 import org.fossify.commons.extensions.toast
 import org.fossify.commons.extensions.value
 import org.fossify.commons.helpers.ensureBackgroundThread
-import org.fossify.commons.models.RadioItem
 import org.fossify.phone.R
 import org.fossify.phone.activities.SimpleActivity
 import org.fossify.phone.cm.CmApiException
@@ -21,11 +24,12 @@ import org.fossify.phone.cm.CmErrorCodes
 import org.fossify.phone.cm.NoteTarget
 import org.fossify.phone.cm.NoteTargetType
 import org.fossify.phone.databinding.DialogCmAddNoteBinding
+import org.fossify.phone.databinding.ItemCmNoteTargetBinding
 import org.greenrobot.eventbus.EventBus
 
 /**
  * "Dopisz notatkę" - append a note to an existing CM contact, or to one of its
- * related build / client records when the target dropdown is used. Updates the
+ * related build / client records via the "Notatka dotyczy" picker. Updates the
  * local cache optimistically from the server's response.
  */
 class CmAddNoteDialog(
@@ -35,6 +39,7 @@ class CmAddNoteDialog(
 ) {
     private val binding = DialogCmAddNoteBinding.inflate(activity.layoutInflater)
     private var dialog: AlertDialog? = null
+    private var targetPickerDialog: AlertDialog? = null
 
     private data class TargetOption(val label: String, val target: NoteTarget?)
 
@@ -53,8 +58,8 @@ class CmAddNoteDialog(
         binding.cmAddNoteName.text = contactName()
 
         binding.cmAddNoteTargetHolder.beVisible()
-        binding.cmAddNoteTarget.text = options[selectedIndex].label
         binding.cmAddNoteTarget.setOnClickListener { pickTarget() }
+        renderSelectedTarget()
 
         activity.getAlertDialogBuilder()
             .setPositiveButton(R.string.ok, null)
@@ -70,12 +75,49 @@ class CmAddNoteDialog(
 
     private fun contactName() = cmContact.fullName.ifBlank { cmContact.primaryNumber }
 
+    private fun iconFor(target: NoteTarget?): Int = when (target?.type) {
+        NoteTargetType.BUILD -> R.drawable.ic_home_vector
+        NoteTargetType.CLIENT -> R.drawable.ic_briefcase_vector
+        else -> R.drawable.ic_person_small_vector
+    }
+
+    private fun renderSelectedTarget() {
+        val option = options[selectedIndex]
+        binding.cmAddNoteTarget.text = option.label
+
+        val icon = ContextCompat.getDrawable(activity, iconFor(option.target))?.mutate()
+        icon?.setTint(activity.getProperTextColor())
+        binding.cmAddNoteTarget.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null)
+        binding.cmAddNoteTarget.compoundDrawablePadding =
+            activity.resources.getDimensionPixelSize(org.fossify.commons.R.dimen.normal_margin)
+    }
+
     private fun pickTarget() {
-        val items = options.mapIndexed { index, option -> RadioItem(index, option.label) }
-        RadioGroupDialog(activity, ArrayList(items), selectedIndex) { selected ->
-            selectedIndex = selected as Int
-            binding.cmAddNoteTarget.text = options[selectedIndex].label
+        val textColor = activity.getProperTextColor()
+        val list = LinearLayout(activity).apply { orientation = LinearLayout.VERTICAL }
+
+        options.forEachIndexed { index, option ->
+            val row = ItemCmNoteTargetBinding.inflate(activity.layoutInflater, list, false)
+            row.cmNoteTargetIcon.setImageResource(iconFor(option.target))
+            row.cmNoteTargetIcon.applyColorFilter(textColor)
+            row.cmNoteTargetLabel.text = option.label
+            row.cmNoteTargetLabel.setTextColor(textColor)
+            row.root.setOnClickListener {
+                selectedIndex = index
+                renderSelectedTarget()
+                targetPickerDialog?.dismiss()
+            }
+            list.addView(row.root)
         }
+
+        val scroll = ScrollView(activity).apply { addView(list) }
+        activity.getAlertDialogBuilder()
+            .setNegativeButton(R.string.cancel, null)
+            .apply {
+                activity.setupDialogStuff(scroll, this, R.string.cm_note_target) { alertDialog ->
+                    targetPickerDialog = alertDialog
+                }
+            }
     }
 
     private fun save() {
