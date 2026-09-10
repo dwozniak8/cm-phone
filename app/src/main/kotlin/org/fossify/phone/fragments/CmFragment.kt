@@ -236,11 +236,16 @@ class CmFragment(context: Context, attributeSet: AttributeSet) :
                     updateState()
                     refreshFromServer()
                 }
-            } catch (e: CmApiException) {
+            } catch (e: Exception) {
+                val messageRes = if (e is CmApiException && e.statusCode == 401) {
+                    R.string.cm_pairing_failed
+                } else {
+                    R.string.cm_pairing_network_error
+                }
                 activity.runOnUiThread {
                     pairing = false
                     binding.cmPairButton.beVisible()
-                    activity.toast(R.string.cm_pairing_failed)
+                    activity.toast(messageRes)
                     updateState()
                 }
             }

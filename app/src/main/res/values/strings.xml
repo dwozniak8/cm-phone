@@ -100,6 +100,7 @@
     <string name="cm_autoconfig">Auto-configuration</string>
     <string name="cm_pairing_success">Paired with %s</string>
     <string name="cm_pairing_failed">Invalid pairing code</string>
+    <string name="cm_pairing_network_error">Could not reach the CM app - check the address and your connection</string>
     <string name="cm_paired_empty">No CM contacts yet. Tap to update the database.</string>
     <string name="cm_update_database">Update database</string>
     <string name="cm_updating_database">Updating the CM database…</string>

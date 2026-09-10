@@ -105,6 +105,10 @@ class HttpCmApi(
             client.newCall(builder.build()).execute()
         } catch (e: IOException) {
             throw CmApiException(statusCode = -1, message = "Network error: ${e.message}", cause = e)
+        } catch (e: RuntimeException) {
+            // e.g. SecurityException when the INTERNET permission is missing, or
+            // IllegalState/IllegalArgument from a malformed request.
+            throw CmApiException(statusCode = -1, message = "Request failed: ${e.message}", cause = e)
         }
 
         response.use {

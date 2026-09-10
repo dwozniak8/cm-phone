@@ -87,6 +87,7 @@
     <string name="cm_autoconfig">Autokonfiguracja</string>
     <string name="cm_pairing_success">Sparowano z %s</string>
     <string name="cm_pairing_failed">Nieprawidłowy kod parowania</string>
+    <string name="cm_pairing_network_error">Nie udało się połączyć z aplikacją CM - sprawdź adres i połączenie</string>
     <string name="cm_paired_empty">Brak kontaktów CM. Kliknij, aby zaktualizować bazę.</string>
     <string name="cm_update_database">Zaktualizuj bazę</string>
     <string name="cm_updating_database">Aktualizuję bazę CM…</string>

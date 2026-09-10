@@ -19,6 +19,7 @@
     <ID>EmptyFunctionBlock:MainActivity.kt$MainActivity.&lt;no name provided&gt;${}</ID>
     <ID>EmptyFunctionBlock:RecentCallsAdapter.kt$RecentCallsAdapter${}</ID>
     <ID>EmptyFunctionBlock:SpeedDialAdapter.kt$SpeedDialAdapter${}</ID>
+    <ID>InstanceOfCheckForException:CmFragment.kt$CmFragment$e is CmApiException</ID>
     <ID>LargeClass:CallActivity.kt$CallActivity : SimpleActivity</ID>
     <ID>LongMethod:CallActivity.kt$CallActivity$@SuppressLint("ClickableViewAccessibility") private fun handleSwipe()</ID>
     <ID>LongMethod:RecentCallsAdapter.kt$RecentCallsAdapter.RecentCallViewHolder$fun bind(call: RecentCall)</ID>
@@ -33,6 +34,7 @@
     <ID>MagicNumber:CallActivity.kt$CallActivity$5</ID>
     <ID>MagicNumber:CallActivity.kt$CallActivity$50f</ID>
     <ID>MagicNumber:CallActivity.kt$CallActivity$60</ID>
+    <ID>MagicNumber:CmFragment.kt$CmFragment$401</ID>
     <ID>MagicNumber:Config.kt$Config$9</ID>
     <ID>MagicNumber:DialpadActivity.kt$DialpadActivity$3</ID>
     <ID>MagicNumber:DialpadActivity.kt$DialpadActivity$4</ID>
@@ -133,17 +135,18 @@
     <ID>SwallowedException:CallActivity.kt$CallActivity$e: Exception</ID>
     <ID>SwallowedException:CallContactHelper.kt$e: NullPointerException</ID>
     <ID>SwallowedException:CmAddNoteDialog.kt$CmAddNoteDialog$e: CmApiException</ID>
-    <ID>SwallowedException:CmFragment.kt$CmFragment$e: CmApiException</ID>
     <ID>SwallowedException:CmSaveContactDialog.kt$CmSaveContactDialog$e: CmApiException</ID>
     <ID>SwallowedException:CmSyncManager.kt$CmSyncManager$e: Exception</ID>
     <ID>SwallowedException:FastScrollerView.kt$e: IndexOutOfBoundsException</ID>
     <ID>ThrowsCount:HttpCmApi.kt$HttpCmApi$private fun &lt;T&gt; request( builder: Request.Builder, authenticated: Boolean, deserializer: kotlinx.serialization.DeserializationStrategy&lt;T&gt;, ): T</ID>
     <ID>TooGenericExceptionCaught:CallActivity.kt$CallActivity$e: Exception</ID>
     <ID>TooGenericExceptionCaught:CallContactHelper.kt$e: NullPointerException</ID>
+    <ID>TooGenericExceptionCaught:CmFragment.kt$CmFragment$e: Exception</ID>
     <ID>TooGenericExceptionCaught:CmSyncManager.kt$CmSyncManager$e: Exception</ID>
     <ID>TooGenericExceptionCaught:DialerActivity.kt$DialerActivity$e: Exception</ID>
     <ID>TooGenericExceptionCaught:FastScrollerView.kt$e: IndexOutOfBoundsException</ID>
     <ID>TooGenericExceptionCaught:HttpCmApi.kt$HttpCmApi$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:HttpCmApi.kt$HttpCmApi$e: RuntimeException</ID>
     <ID>TooGenericExceptionCaught:SettingsActivity.kt$SettingsActivity$e: Exception</ID>
     <ID>TooManyFunctions:CallActivity.kt$CallActivity : SimpleActivity</ID>
     <ID>TooManyFunctions:CallManager.kt$CallManager$Companion</ID>
