@@ -619,13 +619,11 @@ class RecentCallsAdapter(
                     SimpleContactsHelper(root.context).loadContactImage(call.photoUri, itemRecentsImage, call.name)
                 }
 
-                // CM rows replace the date/time line with note / property /
-                // prospect counts (a category with 0 is hidden).
+                // CM rows show note / property / prospect counts on the second
+                // line, next to the call duration (a category with 0 is hidden).
+                // The number's own location is dropped to make room.
                 itemRecentsCmStats.beVisibleIf(cmContact != null)
                 if (cmContact != null) {
-                    itemRecentsDateTime.beGone()
-                    itemRecentsDateTimeDurationSeparator.beGone()
-                    itemRecentsDuration.beGone()
                     itemRecentsLocation.beGone()
 
                     val statTextSize = currentFontSize * 0.8f
