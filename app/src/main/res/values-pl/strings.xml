@@ -86,7 +86,7 @@
     <string name="cm_pair_button">Sparuj</string>
     <string name="cm_autoconfig">Autokonfiguracja</string>
     <string name="cm_pairing_success">Sparowano z %s</string>
-    <string name="cm_pairing_failed">Nieprawidłowy kod parowania</string>
+    <string name="cm_pairing_failed">Nieprawidłowy lub wygasły kod parowania</string>
     <string name="cm_pairing_network_error">Nie udało się połączyć z aplikacją CM - sprawdź adres i połączenie</string>
     <string name="cm_paired_empty">Brak kontaktów CM. Kliknij, aby zaktualizować bazę.</string>
     <string name="cm_update_database">Zaktualizuj bazę</string>
@@ -109,6 +109,8 @@
     <string name="cm_first_name_required">Podaj imię</string>
     <string name="cm_saved">Zapisano w aplikacji</string>
     <string name="cm_save_failed">Nie udało się zapisać w aplikacji</string>
+    <string name="cm_contact_already_exists">Ten kontakt jest już w aplikacji</string>
+    <string name="cm_invalid_phone_number">Nieprawidłowy numer telefonu</string>
     <string name="cm_note_added">Notatka dodana</string>
     <string name="cm_open_in_cm">Otwórz w CM</string>
     <string name="cm_bullet">•</string>

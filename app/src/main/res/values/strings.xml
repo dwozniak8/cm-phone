@@ -99,7 +99,7 @@
     <string name="cm_pair_button">Pair</string>
     <string name="cm_autoconfig">Auto-configuration</string>
     <string name="cm_pairing_success">Paired with %s</string>
-    <string name="cm_pairing_failed">Invalid pairing code</string>
+    <string name="cm_pairing_failed">Invalid or expired pairing code</string>
     <string name="cm_pairing_network_error">Could not reach the CM app - check the address and your connection</string>
     <string name="cm_paired_empty">No CM contacts yet. Tap to update the database.</string>
     <string name="cm_update_database">Update database</string>
@@ -122,6 +122,8 @@
     <string name="cm_first_name_required">Enter a first name</string>
     <string name="cm_saved">Saved in the app</string>
     <string name="cm_save_failed">Could not save to the app</string>
+    <string name="cm_contact_already_exists">This contact is already in the app</string>
+    <string name="cm_invalid_phone_number">Invalid phone number</string>
     <string name="cm_note_added">Note added</string>
     <string name="cm_open_in_cm">Open in CM</string>
     <string name="cm_bullet">•</string>

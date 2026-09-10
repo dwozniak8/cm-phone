@@ -39,6 +39,7 @@ import org.fossify.commons.helpers.isTiramisuPlus
 import org.fossify.commons.models.RadioItem
 import org.fossify.phone.R
 import org.fossify.phone.databinding.ActivitySettingsBinding
+import org.fossify.phone.cm.CmClient
 import org.fossify.phone.cm.CmContactStore
 import org.fossify.phone.cm.CmPairingStateChangedEvent
 import org.fossify.phone.cm.cmAuthStore
@@ -415,6 +416,10 @@ class SettingsActivity : SimpleActivity() {
     private fun setupCmUnpair() {
         binding.settingsCmUnpairHolder.setOnClickListener {
             ConfirmationDialog(this, getString(R.string.cm_settings_unpair_confirmation)) {
+                // best-effort server-side revoke (captures the token now, runs async);
+                // the local cleanup below happens regardless of the result
+                CmClient.revokeDeviceAsync(this)
+
                 cmAuthStore.clear()
                 CmContactStore.clear(this)
                 config.cmLastSyncTS = 0L

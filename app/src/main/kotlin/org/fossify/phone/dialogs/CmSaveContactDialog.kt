@@ -13,6 +13,7 @@ import org.fossify.phone.cm.CmApiException
 import org.fossify.phone.cm.CmClient
 import org.fossify.phone.cm.CmContactStore
 import org.fossify.phone.cm.CmContactsUpdatedEvent
+import org.fossify.phone.cm.CmErrorCodes
 import org.fossify.phone.cm.CmPhoneNumber
 import org.fossify.phone.cm.CreateContactRequest
 import org.fossify.phone.databinding.DialogCmSaveContactBinding
@@ -82,7 +83,12 @@ class CmSaveContactDialog(
                     onSaved?.invoke()
                 }
             } catch (e: CmApiException) {
-                activity.runOnUiThread { activity.toast(R.string.cm_save_failed) }
+                val messageRes = when (e.errorCode) {
+                    CmErrorCodes.CONTACT_ALREADY_EXISTS -> R.string.cm_contact_already_exists
+                    CmErrorCodes.INVALID_PHONE_NUMBER -> R.string.cm_invalid_phone_number
+                    else -> R.string.cm_save_failed
+                }
+                activity.runOnUiThread { activity.toast(messageRes) }
             }
         }
     }

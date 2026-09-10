@@ -187,6 +187,32 @@ Response: the created contact (same shape as list items).
   that file).
 - All new strings have PL translations.
 
+### Batch 8 — align with the shipped `cm-api` (`docs/from-api.md`)
+
+- **`/device/` path prefix** on data calls: `HttpCmApi` now hits
+  `<baseUrl>/device/contacts[...]`. `baseUrl` from the pair response has no path.
+- **Bare-string error body** `{ "error": "UPPER_SNAKE" }`: parsed into
+  `CmApiException.errorCode`; `CmErrorCodes` holds the known values. Dialogs map
+  `CONTACT_ALREADY_EXISTS` / `INVALID_PHONE_NUMBER` / `ITEM_NOT_FOUND` to
+  specific toasts.
+- **Any `2xx` is success** — `HttpCmApi` already keyed off `isSuccessful`.
+- **Uppercase pairing code** before `POST /device/pair` (server is
+  case-sensitive).
+- **Refresh flow wired**: on a `401` from a bearer call `HttpCmApi` calls
+  `POST /device/refresh` once, persists the **rotated** tokens
+  (`onTokensRefreshed` → `CmAuthStore.save`), and retries. A second `401` ⇒
+  `CmSyncManager` clears the pairing.
+- **`DELETE /device/pair`**: `CmApi.unpairDevice()`; "Rozparuj urządzenie" fires
+  `CmClient.revokeDeviceAsync` (token snapshot + background call) before local
+  cleanup.
+- **Full-list authority**: `getContacts` already `replaceAll`s the cache, so rows
+  absent from the response are dropped — matches delta option B.
+- `user.name` may be `""` → `CmAuthStore` falls back to `user.id`, the toast to a
+  generic label.
+- **Deferred (phase 2):** intent filter for `cmphone://pair?code=…&service=…` so
+  "Autokonfiguracja" is one tap. Until then the link opens the pairing page in a
+  browser and the code is copied by hand.
+
 ## Non-goals
 
 - Editing CM contacts from the app beyond create + append-note.

@@ -9,6 +9,7 @@ class FakeCmApi : CmApi {
 
     private val contacts = sampleContacts().toMutableList()
     private var counter = contacts.size
+    private var refreshCounter = 0
 
     override fun pair(code: String): PairResponse {
         if (code.trim().length !in VALID_CODE_LENGTH) {
@@ -26,12 +27,15 @@ class FakeCmApi : CmApi {
     }
 
     override fun refresh(refreshToken: String): RefreshResponse {
+        refreshCounter++
         return RefreshResponse(
-            accessToken = "fake-access-token-refreshed",
-            refreshToken = "fake-refresh-token",
+            accessToken = "fake-access-token-$refreshCounter",
+            refreshToken = "fake-refresh-token-$refreshCounter",
             expiresInSec = 3600,
         )
     }
+
+    override fun unpairDevice() = Unit
 
     override fun getContacts(sinceMillis: Long?): List<CmContact> {
         return contacts.toList()

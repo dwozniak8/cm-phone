@@ -90,9 +90,25 @@ data class AddNoteRequest(
     val note: String,
 )
 
+/** Error body shape: `{ "error": "UPPER_SNAKE_CASE_CODE" }`. */
+@Serializable
+data class CmErrorBody(
+    val error: String? = null,
+)
+
+object CmErrorCodes {
+    const val INVALID_PAIRING_CODE = "INVALID_PAIRING_CODE"
+    const val INVALID_REFRESH_TOKEN = "INVALID_REFRESH_TOKEN"
+    const val DEVICE_SESSION_REVOKED = "DEVICE_SESSION_REVOKED"
+    const val CONTACT_ALREADY_EXISTS = "CONTACT_ALREADY_EXISTS"
+    const val INVALID_PHONE_NUMBER = "INVALID_PHONE_NUMBER"
+    const val ITEM_NOT_FOUND = "ITEM_NOT_FOUND"
+}
+
 /** Thrown by [CmApi] implementations on any non-success outcome. */
 class CmApiException(
     val statusCode: Int,
     message: String,
+    val errorCode: String? = null,
     cause: Throwable? = null,
 ) : Exception(message, cause)

@@ -34,6 +34,7 @@
     <ID>MagicNumber:CallActivity.kt$CallActivity$5</ID>
     <ID>MagicNumber:CallActivity.kt$CallActivity$50f</ID>
     <ID>MagicNumber:CallActivity.kt$CallActivity$60</ID>
+    <ID>MagicNumber:CmAddNoteDialog.kt$CmAddNoteDialog$404</ID>
     <ID>MagicNumber:CmFragment.kt$CmFragment$401</ID>
     <ID>MagicNumber:Config.kt$Config$9</ID>
     <ID>MagicNumber:DialpadActivity.kt$DialpadActivity$3</ID>
@@ -43,8 +44,6 @@
     <ID>MagicNumber:DialpadActivity.kt$DialpadActivity$7</ID>
     <ID>MagicNumber:DialpadActivity.kt$DialpadActivity$8</ID>
     <ID>MagicNumber:DialpadActivity.kt$DialpadActivity$9</ID>
-    <ID>MagicNumber:HttpCmApi.kt$HttpCmApi$15</ID>
-    <ID>MagicNumber:HttpCmApi.kt$HttpCmApi$30</ID>
     <ID>MagicNumber:MainActivity.kt$MainActivity$100L</ID>
     <ID>MagicNumber:MainActivity.kt$MainActivity$2000</ID>
     <ID>MagicNumber:RecentCallsAdapter.kt$RecentCallsAdapter$0.6f</ID>
@@ -76,7 +75,6 @@
     <ID>MaxLineLength:CmContactActivity.kt$CmContactActivity$setSectionExpanded(binding.cmContactNoteList, binding.cmContactNoteChevron, expandedSection == Section.NOTES, animate)</ID>
     <ID>MaxLineLength:CmContactActivity.kt$CmContactActivity$setSectionExpanded(binding.cmContactPropertyList, binding.cmContactPropertyChevron, expandedSection == Section.PROPERTIES, animate)</ID>
     <ID>MaxLineLength:CmFragment.kt$CmFragment$(queryDigits.isNotEmpty() &amp;&amp; contact.phoneNumbers.any { it.number.filter(Char::isDigit).contains(queryDigits) })</ID>
-    <ID>MaxLineLength:CmFragment.kt$CmFragment$activity.toast(activity.getString(R.string.cm_pairing_success, activity.cmAuthStore.userName.orEmpty()))</ID>
     <ID>MaxLineLength:ConferenceActivity.kt$ConferenceActivity$conferenceList.adapter = ConferenceCallsAdapter(this@ConferenceActivity, conferenceList, ArrayList(CallManager.getConferenceCalls())) {}</ID>
     <ID>MaxLineLength:ConferenceCallsAdapter.kt$ConferenceCallsAdapter$itemConferenceCallName.text = callContact.name.ifEmpty { itemView.context.getString(R.string.unknown_caller) }</ID>
     <ID>MaxLineLength:Config.kt$Config$set(wasOverlaySnackbarConfirmed) = prefs.edit().putBoolean(WAS_OVERLAY_SNACKBAR_CONFIRMED, wasOverlaySnackbarConfirmed).apply()</ID>
@@ -134,11 +132,12 @@
     <ID>NewLineAtEndOfFile:RecentCallsAdapter.kt$org.fossify.phone.adapters.RecentCallsAdapter.kt</ID>
     <ID>SwallowedException:CallActivity.kt$CallActivity$e: Exception</ID>
     <ID>SwallowedException:CallContactHelper.kt$e: NullPointerException</ID>
-    <ID>SwallowedException:CmAddNoteDialog.kt$CmAddNoteDialog$e: CmApiException</ID>
-    <ID>SwallowedException:CmSaveContactDialog.kt$CmSaveContactDialog$e: CmApiException</ID>
+    <ID>SwallowedException:CmClient.kt$CmClient$e: CmApiException</ID>
     <ID>SwallowedException:CmSyncManager.kt$CmSyncManager$e: Exception</ID>
     <ID>SwallowedException:FastScrollerView.kt$e: IndexOutOfBoundsException</ID>
-    <ID>ThrowsCount:HttpCmApi.kt$HttpCmApi$private fun &lt;T&gt; request( builder: Request.Builder, authenticated: Boolean, deserializer: kotlinx.serialization.DeserializationStrategy&lt;T&gt;, ): T</ID>
+    <ID>SwallowedException:HttpCmApi.kt$HttpCmApi$e: CmApiException</ID>
+    <ID>SwallowedException:HttpCmApi.kt$HttpCmApi$e: Exception</ID>
+    <ID>ThrowsCount:HttpCmApi.kt$HttpCmApi$private fun &lt;T&gt; execute( request: Request, deserializer: DeserializationStrategy&lt;T&gt;?, allowRefresh: Boolean, ): T</ID>
     <ID>TooGenericExceptionCaught:CallActivity.kt$CallActivity$e: Exception</ID>
     <ID>TooGenericExceptionCaught:CallContactHelper.kt$e: NullPointerException</ID>
     <ID>TooGenericExceptionCaught:CmFragment.kt$CmFragment$e: Exception</ID>
@@ -156,6 +155,7 @@
     <ID>TooManyFunctions:ConferenceCallsAdapter.kt$ConferenceCallsAdapter : MyRecyclerViewAdapter</ID>
     <ID>TooManyFunctions:ContactsAdapter.kt$ContactsAdapter : MyRecyclerViewAdapterItemTouchHelperContractMyZoomListener</ID>
     <ID>TooManyFunctions:DialpadActivity.kt$DialpadActivity : SimpleActivity</ID>
+    <ID>TooManyFunctions:HttpCmApi.kt$HttpCmApi : CmApi</ID>
     <ID>TooManyFunctions:MainActivity.kt$MainActivity : SimpleActivity</ID>
     <ID>TooManyFunctions:RecentCallsAdapter.kt$RecentCallsAdapter : MyRecyclerViewListAdapter</ID>
     <ID>TooManyFunctions:RecentsFragment.kt$RecentsFragment : MyViewPagerFragmentRefreshItemsListener</ID>

@@ -14,6 +14,7 @@ import org.fossify.phone.cm.CmClient
 import org.fossify.phone.cm.CmContact
 import org.fossify.phone.cm.CmContactStore
 import org.fossify.phone.cm.CmContactsUpdatedEvent
+import org.fossify.phone.cm.CmErrorCodes
 import org.fossify.phone.databinding.DialogCmAddNoteBinding
 import org.greenrobot.eventbus.EventBus
 
@@ -62,7 +63,12 @@ class CmAddNoteDialog(
                     onSaved?.invoke()
                 }
             } catch (e: CmApiException) {
-                activity.runOnUiThread { activity.toast(R.string.cm_save_failed) }
+                val messageRes = if (e.errorCode == CmErrorCodes.ITEM_NOT_FOUND || e.statusCode == 404) {
+                    R.string.cm_contact_not_found
+                } else {
+                    R.string.cm_save_failed
+                }
+                activity.runOnUiThread { activity.toast(messageRes) }
             }
         }
     }

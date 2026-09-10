@@ -204,7 +204,8 @@ class CmFragment(context: Context, attributeSet: AttributeSet) :
     private fun pair() {
         if (pairing) return
 
-        val code = binding.cmPairingCode.value.trim()
+        // codes are issued upper-case and the server is case-sensitive
+        val code = binding.cmPairingCode.value.trim().uppercase()
         if (code.isEmpty()) {
             activity?.toast(R.string.cm_pairing_code_hint)
             return
@@ -232,7 +233,9 @@ class CmFragment(context: Context, attributeSet: AttributeSet) :
                     pairing = false
                     binding.cmPairButton.beVisible()
                     binding.cmPairingCode.setText("")
-                    activity.toast(activity.getString(R.string.cm_pairing_success, activity.cmAuthStore.userName.orEmpty()))
+                    val account = activity.cmAuthStore.userName?.takeIf { it.isNotBlank() }
+                        ?: activity.getString(R.string.cm_tab)
+                    activity.toast(activity.getString(R.string.cm_pairing_success, account))
                     updateState()
                     refreshFromServer()
                 }
