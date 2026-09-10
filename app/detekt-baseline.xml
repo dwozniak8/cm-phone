@@ -161,6 +161,7 @@
     <ID>TooManyFunctions:SettingsActivity.kt$SettingsActivity : SimpleActivity</ID>
     <ID>TooManyFunctions:SpeedDialAdapter.kt$SpeedDialAdapter : MyRecyclerViewAdapter</ID>
     <ID>UnusedParameter:CallActivity.kt$CallActivity$view: View</ID>
+    <ID>UnusedParameter:CmContactActivity.kt$CmContactActivity$event: CmContactsUpdatedEvent</ID>
     <ID>UnusedParameter:CmFragment.kt$CmFragment$event: CmContactsUpdatedEvent</ID>
     <ID>UnusedParameter:MainActivity.kt$MainActivity$event: Events.RefreshCallLog</ID>
     <ID>UtilityClassWithPublicConstructor:CallManager.kt$CallManager</ID>

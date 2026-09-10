@@ -21,6 +21,8 @@ import org.fossify.phone.R
 import org.fossify.phone.cm.CmAvatar
 import org.fossify.phone.cm.CmContact
 import org.fossify.phone.cm.CmContactStore
+import org.fossify.phone.cm.CmContactsUpdatedEvent
+import org.fossify.phone.cm.CmSyncManager
 import org.fossify.phone.databinding.ActivityCmContactBinding
 import org.fossify.phone.databinding.ItemCmNoteBinding
 import org.fossify.phone.databinding.ItemCmPhoneNumberBinding
@@ -31,10 +33,14 @@ import org.fossify.phone.extensions.startCallWithConfirmationCheck
 import org.fossify.phone.helpers.CM_CLIENT_PATH
 import org.fossify.phone.helpers.CM_CONTACT_ID
 import org.fossify.phone.helpers.CM_PROPERTY_PATH
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 /**
  * Read-only detail view for a single CM contact. Everything comes from the local
- * [CmContactStore] cache, so it works offline.
+ * [CmContactStore] cache, so it works offline; opening the screen also kicks a
+ * best-effort [CmSyncManager] refresh and re-renders if it brings newer data.
  *
  * The body is a single collapsible list of records - the contact first, then its
  * related properties / clients, each with a type icon on the left. Expanding a
@@ -70,6 +76,10 @@ class CmContactActivity : SimpleActivity() {
             setOnMenuItemClickListener { onMenuItemClick(it) }
         }
 
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this)
+        }
+
         ensureBackgroundThread {
             CmContactStore.ensureLoaded(this)
             val loaded = intent.getStringExtra(CM_CONTACT_ID)?.let { CmContactStore.findById(it) }
@@ -80,6 +90,9 @@ class CmContactActivity : SimpleActivity() {
                 } else {
                     contact = loaded
                     bindContact(loaded)
+                    // Pull the latest from the server; a successful sync posts
+                    // CmContactsUpdatedEvent -> onContactsUpdated re-renders.
+                    CmSyncManager.syncNow(this, null)
                 }
             }
         }
@@ -89,6 +102,18 @@ class CmContactActivity : SimpleActivity() {
         super.onResume()
         setupTopAppBar(binding.cmContactAppbar, NavigationIcon.Arrow)
         updateTextColors(binding.cmContactScrollview)
+    }
+
+    override fun onDestroy() {
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this)
+        }
+        super.onDestroy()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onContactsUpdated(event: CmContactsUpdatedEvent) {
+        reloadContact()
     }
 
     private fun onMenuItemClick(item: MenuItem): Boolean {
