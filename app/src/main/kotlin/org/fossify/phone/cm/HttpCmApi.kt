@@ -1,5 +1,6 @@
 package org.fossify.phone.cm
 
+import android.util.Log
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
@@ -124,10 +125,12 @@ class HttpCmApi(
         val response = try {
             client.newCall(request).execute()
         } catch (e: IOException) {
+            Log.w(TAG, "${request.method} ${request.url} failed", e)
             throw CmApiException(NETWORK_ERROR, "Network error: ${e.message}", cause = e)
         } catch (e: RuntimeException) {
             // e.g. SecurityException without the INTERNET permission, or a
             // malformed request (IllegalState / IllegalArgument).
+            Log.w(TAG, "${request.method} ${request.url} failed", e)
             throw CmApiException(NETWORK_ERROR, "Request failed: ${e.message}", cause = e)
         }
 
@@ -145,6 +148,7 @@ class HttpCmApi(
             }
 
             if (!it.isSuccessful) {
+                Log.w(TAG, "${request.method} ${request.url} -> ${it.code} $payload")
                 throw CmApiException(
                     statusCode = it.code,
                     message = "CM API ${it.code}: $payload",
@@ -184,6 +188,7 @@ class HttpCmApi(
     }
 
     companion object {
+        private const val TAG = "CmApi"
         private const val CONNECT_TIMEOUT_SEC = 15L
         private const val READ_TIMEOUT_SEC = 30L
         private const val HTTP_UNAUTHORIZED = 401
