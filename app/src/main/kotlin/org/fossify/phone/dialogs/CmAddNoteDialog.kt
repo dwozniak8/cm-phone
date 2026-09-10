@@ -2,7 +2,7 @@ package org.fossify.phone.dialogs
 
 import androidx.appcompat.app.AlertDialog
 import org.fossify.commons.dialogs.RadioGroupDialog
-import org.fossify.commons.extensions.beVisibleIf
+import org.fossify.commons.extensions.beVisible
 import org.fossify.commons.extensions.getAlertDialogBuilder
 import org.fossify.commons.extensions.setupDialogStuff
 import org.fossify.commons.extensions.showKeyboard
@@ -52,7 +52,7 @@ class CmAddNoteDialog(
     init {
         binding.cmAddNoteName.text = contactName()
 
-        binding.cmAddNoteTargetHolder.beVisibleIf(options.size > 1)
+        binding.cmAddNoteTargetHolder.beVisible()
         binding.cmAddNoteTarget.text = options[selectedIndex].label
         binding.cmAddNoteTarget.setOnClickListener { pickTarget() }
 
