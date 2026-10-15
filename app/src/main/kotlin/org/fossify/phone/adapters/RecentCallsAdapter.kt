@@ -1,5 +1,8 @@
 package org.fossify.phone.adapters
 
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.provider.CallLog.Calls
@@ -57,6 +60,7 @@ import org.fossify.phone.activities.MainActivity
 import org.fossify.phone.activities.SimpleActivity
 import org.fossify.phone.cm.CmAvatar
 import org.fossify.phone.cm.CmContactStore
+import org.fossify.phone.cm.cmAuthStore
 import org.fossify.phone.databinding.ItemRecentCallBinding
 import org.fossify.phone.databinding.ItemRecentsDateBinding
 import org.fossify.phone.dialogs.CmContactActionsMenu
@@ -96,6 +100,8 @@ class RecentCallsAdapter(
     private var phoneNumberUtilInstance: PhoneNumberUtil = PhoneNumberUtil.getInstance()
     private var phoneNumberOfflineGeocoderInstance: PhoneNumberOfflineGeocoder = PhoneNumberOfflineGeocoder.getInstance()
     private val cachedSimColors = HashMap<Pair<Int,Int>, Int>()
+    // cached - every cmAuthStore access opens the encrypted prefs
+    private var isCmPaired = activity.cmAuthStore.isPaired
 
     init {
         initDrawables()
@@ -198,6 +204,7 @@ class RecentCallsAdapter(
         super.onViewRecycled(holder)
         if (!activity.isDestroyed && !activity.isFinishing) {
             if (holder is RecentCallViewHolder) {
+                setAvatarPulse(holder.binding.itemRecentsImage, false)
                 Glide.with(activity).clear(holder.binding.itemRecentsImage)
             }
         }
@@ -346,6 +353,7 @@ class RecentCallsAdapter(
 
     @SuppressLint("NotifyDataSetChanged")
     fun updateItems(newItems: List<CallLogItem>, highlightText: String = "") {
+        isCmPaired = activity.cmAuthStore.isPaired
         if (textToHighlight != highlightText) {
             textToHighlight = highlightText
             submitList(newItems) {
@@ -625,6 +633,10 @@ class RecentCallsAdapter(
                     SimpleContactsHelper(root.context).loadContactImage(call.photoUri, itemRecentsImage, call.name)
                 }
 
+                // a number that can still be saved to CM ("Zapisz w aplikacji")
+                // gets a pulsing avatar, so the option is hard to miss
+                setAvatarPulse(itemRecentsImage, interactive && isCmPaired && cmContact == null)
+
                 // CM rows show note / property / prospect counts on the second
                 // line, next to the call duration (a category with 0 is hidden).
                 // The number's own location is dropped to make room.
@@ -673,6 +685,32 @@ class RecentCallsAdapter(
                     true
                 }
             }
+        }
+    }
+
+    private fun setAvatarPulse(avatar: ImageView, pulse: Boolean) {
+        val running = avatar.getTag(R.id.item_recents_image) as? ValueAnimator
+        if (pulse) {
+            if (running == null) {
+                val animator = ObjectAnimator.ofPropertyValuesHolder(
+                    avatar,
+                    PropertyValuesHolder.ofFloat(View.ALPHA, 1f, AVATAR_PULSE_MIN_ALPHA),
+                    PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, AVATAR_PULSE_MIN_SCALE),
+                    PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, AVATAR_PULSE_MIN_SCALE),
+                ).apply {
+                    duration = AVATAR_PULSE_DURATION_MS
+                    repeatCount = ValueAnimator.INFINITE
+                    repeatMode = ValueAnimator.REVERSE
+                }
+                avatar.setTag(R.id.item_recents_image, animator)
+                animator.start()
+            }
+        } else if (running != null) {
+            running.cancel()
+            avatar.setTag(R.id.item_recents_image, null)
+            avatar.alpha = 1f
+            avatar.scaleX = 1f
+            avatar.scaleY = 1f
         }
     }
 
@@ -743,3 +781,7 @@ class RecentCallsDiffCallback : DiffUtil.ItemCallback<CallLogItem>() {
         }
     }
 }
+
+private const val AVATAR_PULSE_DURATION_MS = 650L
+private const val AVATAR_PULSE_MIN_ALPHA = 0.35f
+private const val AVATAR_PULSE_MIN_SCALE = 0.85f
