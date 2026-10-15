@@ -11,6 +11,8 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -27,6 +29,8 @@ import org.fossify.commons.extensions.addLockedLabelIfNeeded
 import org.fossify.commons.extensions.adjustAlpha
 import org.fossify.commons.extensions.adjustForContrast
 import org.fossify.commons.extensions.applyColorFilter
+import org.fossify.commons.extensions.beGone
+import org.fossify.commons.extensions.beVisible
 import org.fossify.commons.extensions.beVisibleIf
 import org.fossify.commons.extensions.copyToClipboard
 import org.fossify.commons.extensions.formatDateOrTime
@@ -51,8 +55,11 @@ import org.fossify.commons.views.MyRecyclerView
 import org.fossify.phone.R
 import org.fossify.phone.activities.MainActivity
 import org.fossify.phone.activities.SimpleActivity
+import org.fossify.phone.cm.CmAvatar
+import org.fossify.phone.cm.CmContactStore
 import org.fossify.phone.databinding.ItemRecentCallBinding
 import org.fossify.phone.databinding.ItemRecentsDateBinding
+import org.fossify.phone.dialogs.CmContactActionsMenu
 import org.fossify.phone.dialogs.ShowGroupedCallsDialog
 import org.fossify.phone.extensions.areMultipleSIMsAvailable
 import org.fossify.phone.extensions.callContactWithSimWithConfirmationCheck
@@ -75,7 +82,6 @@ class RecentCallsAdapter(
     private val showOverflowMenu: Boolean,
     private val itemDelete: (List<RecentCall>) -> Unit = {},
     itemClick: (Any) -> Unit,
-    val profileIconClick: ((Any) -> Unit)? = null
 ) : MyRecyclerViewListAdapter<CallLogItem>(activity, recyclerView, RecentCallsDiffCallback(), itemClick) {
 
     private lateinit var outgoingCallIcon: Drawable
@@ -96,6 +102,7 @@ class RecentCallsAdapter(
         setupDragListener(true)
         setHasStableIds(true)
         (recyclerView.itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
+        CmContactStore.ensureLoaded(activity)
     }
 
     override fun getActionMenuId() = R.menu.cab_recent_calls
@@ -462,19 +469,44 @@ class RecentCallsAdapter(
         selectedKeys.remove(callId)
     }
 
+    /**
+     * The compact CM actions menu, opened by tapping anywhere on the row except
+     * the "…" overflow (which keeps its full menu).
+     */
+    private fun showCmActionsPopup(anchor: View, call: RecentCall) {
+        if (call.isUnknownNumber) {
+            return
+        }
+        finishActMode()
+        CmContactActionsMenu.show(
+            activity = activity as SimpleActivity,
+            anchor = anchor,
+            phoneNumber = call.phoneNumber,
+            displayName = call.name,
+            onChanged = { refreshItemsListener?.refreshItems() },
+        ) {
+            executeItemMenuOperation(call.id) { callContact() }
+        }
+    }
+
     private inner class RecentCallViewHolder(val binding: ItemRecentCallBinding) : ViewHolder(binding.root) {
-        fun bind(call: RecentCall) = bindView(
-            item = call,
-            allowSingleClick = refreshItemsListener != null && !call.isUnknownNumber,
-            allowLongClick = refreshItemsListener != null && !call.isUnknownNumber
-        ) { _, _ ->
+        fun bind(call: RecentCall) {
+            val interactive = refreshItemsListener != null && !call.isUnknownNumber
+            bindView(
+                item = call,
+                allowSingleClick = interactive,
+                allowLongClick = interactive
+            ) { _, _ ->
             binding.apply {
                 root.setupViewBackground(activity)
 
                 val currentFontSize = fontSize
                 itemRecentsHolder.isSelected = selectedKeys.contains(call.id)
                 val matchingContact = findContactByCall(call)
-                val name = matchingContact?.getNameToDisplay() ?: call.name
+                val cmContact = CmContactStore.findByNumber(call.phoneNumber)
+                val name = cmContact?.fullName?.takeIf { it.isNotBlank() }
+                    ?: matchingContact?.getNameToDisplay()
+                    ?: call.name
                 val formatPhoneNumbers = activity.config.formatPhoneNumbers
                 var nameToShow = if (name == call.phoneNumber && formatPhoneNumbers) {
                     SpannableString(name.formatPhoneNumber())
@@ -515,6 +547,7 @@ class RecentCallsAdapter(
                 }
 
                 itemRecentsDateTime.apply {
+                    beVisible()
                     text = if (refreshItemsListener == null) {
                         call.startTS.formatDateOrTime(context, hideTimeOnOtherDays = false, showCurrentYear = false, hideTodaysDate = false)
                     } else {
@@ -578,24 +611,25 @@ class RecentCallsAdapter(
                     itemRecentsSimId.text = call.simID.toString()
                 }
 
-                SimpleContactsHelper(root.context).loadContactImage(call.photoUri, itemRecentsImage, call.name)
+                if (cmContact != null) {
+                    CmAvatar.apply(itemRecentsImage, cmContact.id)
+                } else {
+                    itemRecentsImage.background = null
+                    itemRecentsImage.clearColorFilter()
+                    SimpleContactsHelper(root.context).loadContactImage(call.photoUri, itemRecentsImage, call.name)
+                }
 
-                itemRecentsImage.apply {
-                    if (profileIconClick != null) {
-                        setBackgroundResource(R.drawable.selector_clickable_circle)
+                // CM rows show note / property / prospect counts on the second
+                // line, next to the call duration (a category with 0 is hidden).
+                // The number's own location is dropped to make room.
+                itemRecentsCmStats.beVisibleIf(cmContact != null)
+                if (cmContact != null) {
+                    itemRecentsLocation.beGone()
 
-                        setOnClickListener {
-                            if (!actModeCallback.isSelectable) {
-                                profileIconClick.invoke(call)
-                            } else {
-                                viewClicked(call)
-                            }
-                        }
-                        setOnLongClickListener {
-                            viewLongClicked()
-                            true
-                        }
-                    }
+                    val statTextSize = currentFontSize * 0.8f
+                    bindCmStat(cmStatNotesHolder, cmStatNotesIcon, cmStatNotes, cmContact.notes.size, statTextSize)
+                    bindCmStat(cmStatPropertiesHolder, cmStatPropertiesIcon, cmStatProperties, cmContact.relatedProperties.size, statTextSize)
+                    bindCmStat(cmStatClientsHolder, cmStatClientsIcon, cmStatClients, cmContact.relatedClients.size, statTextSize)
                 }
 
                 val drawable = when (call.type) {
@@ -616,6 +650,30 @@ class RecentCallsAdapter(
                     showPopupMenu(overflowMenuAnchor, call)
                 }
             }
+            }
+
+            // Whole row (except the "…" overflow, which consumes its own taps)
+            // opens the compact CM menu; long-press still starts multi-select.
+            // Wired after bindView so it overrides bindView's own root listener.
+            if (interactive) {
+                binding.itemRecentsHolder.setOnClickListener {
+                    if (actModeCallback.isSelectable) viewClicked(call) else showCmActionsPopup(it, call)
+                }
+                binding.itemRecentsHolder.setOnLongClickListener {
+                    viewLongClicked()
+                    true
+                }
+            }
+        }
+    }
+
+    private fun bindCmStat(holder: View, icon: ImageView, text: TextView, count: Int, textSizePx: Float) {
+        holder.beVisibleIf(count > 0)
+        if (count > 0) {
+            icon.applyColorFilter(secondaryTextColor)
+            text.setTextColor(secondaryTextColor)
+            text.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizePx)
+            text.text = count.toString()
         }
     }
 

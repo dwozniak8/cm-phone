@@ -145,5 +145,7 @@ dependencies {
     implementation(libs.eventbus)
     implementation(libs.libphonenumber)
     implementation(libs.geocoder)
+    implementation(libs.okhttp)
+    implementation(libs.androidx.security.crypto)
     detektPlugins(libs.compose.detekt)
 }

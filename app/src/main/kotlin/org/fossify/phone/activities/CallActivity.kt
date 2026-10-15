@@ -18,6 +18,9 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
+import android.view.animation.LinearInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.ImageView
 import androidx.core.content.res.ResourcesCompat
@@ -42,6 +45,8 @@ import kotlin.math.min
 
 class CallActivity : SimpleActivity() {
     companion object {
+        private const val CM_BADGE_BLINK_MS = 600L
+
         fun getStartIntent(context: Context): Intent {
             val openAppIntent = Intent(context, CallActivity::class.java)
             openAppIntent.flags = Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
@@ -579,6 +584,24 @@ class CallActivity : SimpleActivity() {
         binding.apply {
             val (name, _, number, numberLabel) = callContact!!
             callerNameLabel.text = name.ifEmpty { getString(R.string.unknown_caller) }
+
+            if (callContact!!.isCmContact) {
+                callerCmBadge.beVisible()
+                if (callerCmBadge.animation == null) {
+                    callerCmBadge.startAnimation(
+                        AlphaAnimation(1f, 0.15f).apply {
+                            duration = CM_BADGE_BLINK_MS
+                            repeatMode = Animation.REVERSE
+                            repeatCount = Animation.INFINITE
+                            interpolator = LinearInterpolator()
+                        }
+                    )
+                }
+            } else {
+                callerCmBadge.clearAnimation()
+                callerCmBadge.beGone()
+            }
+
             if (number.isNotEmpty() && number != name) {
                 callerNumber.text = number
 

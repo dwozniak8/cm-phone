@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:installLocation="auto">
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -91,6 +92,13 @@
             android:exported="false"
             android:label="@string/speed_dial"
             android:parentActivityName=".activities.SettingsActivity" />
+
+        <activity
+            android:name=".activities.CmContactActivity"
+            android:configChanges="orientation"
+            android:exported="false"
+            android:label="@string/cm_tab"
+            android:parentActivityName=".activities.MainActivity" />
 
         <activity
             android:name=".activities.ConferenceActivity"

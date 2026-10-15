@@ -77,4 +77,42 @@
     <string name="call_notification_channel">Status połączenia</string>
     <string name="call_notification_channel_high_priority">Status połączenia (wysoki priorytet)</string>
     <string name="calling_accounts">Konta telefoniczne</string>
+
+    <!-- Integracja CM -->
+    <string name="cm_tab">CM</string>
+    <string name="cm_pairing_prompt">Podaj kod parowania i adres aplikacji CM</string>
+    <string name="cm_pairing_code_hint">Kod parowania</string>
+    <string name="cm_pairing_service_url">Adres aplikacji CM</string>
+    <string name="cm_pair_button">Sparuj</string>
+    <string name="cm_autoconfig">Autokonfiguracja</string>
+    <string name="cm_pairing_success">Sparowano z %s</string>
+    <string name="cm_pairing_failed">Nieprawidłowy kod parowania</string>
+    <string name="cm_pairing_network_error">Nie udało się połączyć z aplikacją CM - sprawdź adres i połączenie</string>
+    <string name="cm_paired_empty">Brak kontaktów CM. Kliknij, aby zaktualizować bazę.</string>
+    <string name="cm_update_database">Zaktualizuj bazę</string>
+    <string name="cm_updating_database">Aktualizuję bazę CM…</string>
+    <string name="cm_update_failed">Nie udało się zaktualizować bazy CM</string>
+    <string name="cm_contact_not_found">Ten kontakt CM nie jest już dostępny</string>
+    <string name="cm_detail_notes">Notatki</string>
+    <string name="cm_detail_properties">Powiązane nieruchomości</string>
+    <string name="cm_detail_clients">Powiązani klienci poszukujący</string>
+    <string name="cm_section_title">%1$s (%2$d)</string>
+    <string name="cm_contact_badge">Kontakt z aplikacji</string>
+    <string name="cm_dialer_check_hint">Wprowadzany kontakt jest już w aplikacji.</string>
+    <string name="cm_save_in_app">Zapisz w aplikacji</string>
+    <string name="cm_add_note">Dopisz notatkę</string>
+    <string name="cm_open_details">Otwórz szczegóły</string>
+    <string name="cm_call">Zadzwoń</string>
+    <string name="cm_first_name">Imię</string>
+    <string name="cm_last_name">Nazwisko</string>
+    <string name="cm_note_hint">Notatka</string>
+    <string name="cm_first_name_required">Podaj imię</string>
+    <string name="cm_saved">Zapisano w aplikacji</string>
+    <string name="cm_save_failed">Nie udało się zapisać w aplikacji</string>
+    <string name="cm_note_added">Notatka dodana</string>
+    <string name="cm_open_in_cm">Otwórz w CM</string>
+    <string name="cm_bullet">•</string>
+    <string name="cm_settings_unpair">Rozparuj urządzenie</string>
+    <string name="cm_settings_unpair_confirmation">Rozparować to urządzenie z CM i usunąć lokalną kopię kontaktów?</string>
+    <string name="cm_settings_unpaired">Urządzenie rozparowane</string>
 </resources>

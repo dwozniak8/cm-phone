@@ -4,6 +4,7 @@
   <CurrentIssues>
     <ID>ComplexCondition:DialpadActivity.kt$DialpadActivity$(intent.action == Intent.ACTION_DIAL || intent.action == Intent.ACTION_VIEW) &amp;&amp; intent.data != null &amp;&amp; intent.dataString?.contains("tel:") == true</ID>
     <ID>CyclomaticComplexMethod:CallActivity.kt$CallActivity$@SuppressLint("ClickableViewAccessibility") private fun handleSwipe()</ID>
+    <ID>CyclomaticComplexMethod:CallContactHelper.kt$fun getCallContact(context: Context, call: Call?, callback: (CallContact) -&gt; Unit)</ID>
     <ID>CyclomaticComplexMethod:CallManager.kt$CallManager.Companion$fun getPhoneState(): PhoneState</ID>
     <ID>CyclomaticComplexMethod:ContactsAdapter.kt$ContactsAdapter$@SuppressLint("ClickableViewAccessibility") private fun setupView(binding: ItemViewBinding, contact: Contact, holder: ViewHolder)</ID>
     <ID>CyclomaticComplexMethod:RecentCallsAdapter.kt$RecentCallsAdapter$private fun showPopupMenu(view: View, call: RecentCall)</ID>
@@ -12,16 +13,19 @@
     <ID>CyclomaticComplexMethod:RecentsHelper.kt$RecentsHelper$@SuppressLint("NewApi") private fun getRecents( contacts: List&lt;Contact&gt;, selection: String? = null, selectionParams: Array&lt;String&gt;? = null, ): List&lt;RecentCall&gt;</ID>
     <ID>DestructuringDeclarationWithTooManyEntries:CallActivity.kt$CallActivity$val (name, _, number, numberLabel) = callContact!!</ID>
     <ID>EmptyCatchBlock:CallActivity.kt$CallActivity${ }</ID>
+    <ID>EmptyFunctionBlock:CmContactsAdapter.kt$CmContactsAdapter${}</ID>
     <ID>EmptyFunctionBlock:ConferenceCallsAdapter.kt$ConferenceCallsAdapter${}</ID>
     <ID>EmptyFunctionBlock:ContactsAdapter.kt$ContactsAdapter${}</ID>
     <ID>EmptyFunctionBlock:MainActivity.kt$MainActivity.&lt;no name provided&gt;${}</ID>
     <ID>EmptyFunctionBlock:RecentCallsAdapter.kt$RecentCallsAdapter${}</ID>
     <ID>EmptyFunctionBlock:SpeedDialAdapter.kt$SpeedDialAdapter${}</ID>
+    <ID>InstanceOfCheckForException:CmFragment.kt$CmFragment$e is CmApiException</ID>
     <ID>LargeClass:CallActivity.kt$CallActivity : SimpleActivity</ID>
     <ID>LongMethod:CallActivity.kt$CallActivity$@SuppressLint("ClickableViewAccessibility") private fun handleSwipe()</ID>
     <ID>LongMethod:RecentCallsAdapter.kt$RecentCallsAdapter.RecentCallViewHolder$fun bind(call: RecentCall)</ID>
     <ID>LongMethod:RecentsHelper.kt$RecentsHelper$@SuppressLint("NewApi") private fun getRecents( contacts: List&lt;Contact&gt;, selection: String? = null, selectionParams: Array&lt;String&gt;? = null, ): List&lt;RecentCall&gt;</ID>
     <ID>MagicNumber:CallActivity.kt$CallActivity$0.10f</ID>
+    <ID>MagicNumber:CallActivity.kt$CallActivity$0.15f</ID>
     <ID>MagicNumber:CallActivity.kt$CallActivity$0.2f</ID>
     <ID>MagicNumber:CallActivity.kt$CallActivity$0.5f</ID>
     <ID>MagicNumber:CallActivity.kt$CallActivity$200L</ID>
@@ -30,6 +34,7 @@
     <ID>MagicNumber:CallActivity.kt$CallActivity$5</ID>
     <ID>MagicNumber:CallActivity.kt$CallActivity$50f</ID>
     <ID>MagicNumber:CallActivity.kt$CallActivity$60</ID>
+    <ID>MagicNumber:CmFragment.kt$CmFragment$401</ID>
     <ID>MagicNumber:Config.kt$Config$9</ID>
     <ID>MagicNumber:DialpadActivity.kt$DialpadActivity$3</ID>
     <ID>MagicNumber:DialpadActivity.kt$DialpadActivity$4</ID>
@@ -38,6 +43,8 @@
     <ID>MagicNumber:DialpadActivity.kt$DialpadActivity$7</ID>
     <ID>MagicNumber:DialpadActivity.kt$DialpadActivity$8</ID>
     <ID>MagicNumber:DialpadActivity.kt$DialpadActivity$9</ID>
+    <ID>MagicNumber:HttpCmApi.kt$HttpCmApi$15</ID>
+    <ID>MagicNumber:HttpCmApi.kt$HttpCmApi$30</ID>
     <ID>MagicNumber:MainActivity.kt$MainActivity$100L</ID>
     <ID>MagicNumber:MainActivity.kt$MainActivity$2000</ID>
     <ID>MagicNumber:RecentCallsAdapter.kt$RecentCallsAdapter$0.6f</ID>
@@ -65,6 +72,11 @@
     <ID>MaxLineLength:CallManager.kt$CallManager.Companion$val newCall = calls.find { it.getStateCompat() == Call.STATE_CONNECTING || it.getStateCompat() == Call.STATE_DIALING }</ID>
     <ID>MaxLineLength:ChangeSortingDialog.kt$ChangeSortingDialog$class</ID>
     <ID>MaxLineLength:ChangeSortingDialog.kt$ChangeSortingDialog$if</ID>
+    <ID>MaxLineLength:CmContactActivity.kt$CmContactActivity$setSectionExpanded(binding.cmContactClientList, binding.cmContactClientChevron, expandedSection == Section.CLIENTS, animate)</ID>
+    <ID>MaxLineLength:CmContactActivity.kt$CmContactActivity$setSectionExpanded(binding.cmContactNoteList, binding.cmContactNoteChevron, expandedSection == Section.NOTES, animate)</ID>
+    <ID>MaxLineLength:CmContactActivity.kt$CmContactActivity$setSectionExpanded(binding.cmContactPropertyList, binding.cmContactPropertyChevron, expandedSection == Section.PROPERTIES, animate)</ID>
+    <ID>MaxLineLength:CmFragment.kt$CmFragment$(queryDigits.isNotEmpty() &amp;&amp; contact.phoneNumbers.any { it.number.filter(Char::isDigit).contains(queryDigits) })</ID>
+    <ID>MaxLineLength:CmFragment.kt$CmFragment$activity.toast(activity.getString(R.string.cm_pairing_success, activity.cmAuthStore.userName.orEmpty()))</ID>
     <ID>MaxLineLength:ConferenceActivity.kt$ConferenceActivity$conferenceList.adapter = ConferenceCallsAdapter(this@ConferenceActivity, conferenceList, ArrayList(CallManager.getConferenceCalls())) {}</ID>
     <ID>MaxLineLength:ConferenceCallsAdapter.kt$ConferenceCallsAdapter$itemConferenceCallName.text = callContact.name.ifEmpty { itemView.context.getString(R.string.unknown_caller) }</ID>
     <ID>MaxLineLength:Config.kt$Config$set(wasOverlaySnackbarConfirmed) = prefs.edit().putBoolean(WAS_OVERLAY_SNACKBAR_CONFIRMED, wasOverlaySnackbarConfirmed).apply()</ID>
@@ -77,14 +89,11 @@
     <ID>MaxLineLength:ContactsFragment.kt$ContactsFragment$!getProperText(nameToDisplay, shouldNormalize).startsWith(fixedText, true) &amp;&amp; !nameToDisplay.contains(fixedText, true)</ID>
     <ID>MaxLineLength:ContactsFragment.kt$ContactsFragment$class</ID>
     <ID>MaxLineLength:ExportCallHistoryDialog.kt$ExportCallHistoryDialog$activity.getAlertDialogBuilder().setPositiveButton(R.string.ok, null).setNegativeButton(R.string.cancel, null)</ID>
-    <ID>MaxLineLength:FavoritesFragment.kt$FavoritesFragment$(binding.fragmentList.layoutManager as? MyGridLayoutManager)?.spanCount = context!!.config.contactsGridColumnCount</ID>
-    <ID>MaxLineLength:FavoritesFragment.kt$FavoritesFragment$class</ID>
     <ID>MaxLineLength:FilterContactSourcesAdapter.kt$FilterContactSourcesAdapter.ViewHolder$filterContactSourceCheckbox.setColors(activity.getProperTextColor(), activity.getProperPrimaryColor(), activity.getProperBackgroundColor())</ID>
     <ID>MaxLineLength:FilterContactSourcesDialog.kt$FilterContactSourcesDialog$binding.filterContactSourcesList.adapter = FilterContactSourcesAdapter(activity, contactSourcesWithCount, selectedSources)</ID>
     <ID>MaxLineLength:FilterContactSourcesDialog.kt$FilterContactSourcesDialog$val selectedContactSources = (binding.filterContactSourcesList.adapter as FilterContactSourcesAdapter).getSelectedContactSources()</ID>
     <ID>MaxLineLength:MainActivity.kt$MainActivity$(drawable as LayerDrawable).findDrawableByLayerId(R.id.shortcut_dialpad_background).applyColorFilter(appIconColor)</ID>
     <ID>MaxLineLength:MainActivity.kt$MainActivity$TAB_LAST_USED -&gt; if (config.lastUsedViewPagerPage &lt; binding.mainTabsHolder.tabCount) config.lastUsedViewPagerPage else 0</ID>
-    <ID>MaxLineLength:MainActivity.kt$MainActivity$findItem(R.id.column_count).isVisible = currentFragment == getFavoritesFragment() &amp;&amp; config.viewType == VIEW_TYPE_GRID</ID>
     <ID>MaxLineLength:MainActivity.kt$MainActivity$private fun getCurrentFragment(): MyViewPagerFragment&lt;*&gt;?</ID>
     <ID>MaxLineLength:MainActivity.kt$MainActivity$private fun getInactiveTabIndexes(activeIndex: Int)</ID>
     <ID>MaxLineLength:MainActivity.kt$MainActivity$val confirmationText = "${getString(R.string.clear_history_confirmation)}\n\n${getString(R.string.cannot_be_undone)}"</ID>
@@ -98,13 +107,14 @@
     <ID>MaxLineLength:RecentCallsAdapter.kt$RecentCallsAdapter$private var phoneNumberOfflineGeocoderInstance: PhoneNumberOfflineGeocoder = PhoneNumberOfflineGeocoder.getInstance()</ID>
     <ID>MaxLineLength:RecentCallsAdapter.kt$RecentCallsAdapter$return (activity as MainActivity).cachedContacts.find { it.name == recentCall.name &amp;&amp; it.doesHavePhoneNumber(recentCall.phoneNumber) }</ID>
     <ID>MaxLineLength:RecentCallsAdapter.kt$RecentCallsAdapter.RecentCallViewHolder$&amp;&amp;</ID>
+    <ID>MaxLineLength:RecentCallsAdapter.kt$RecentCallsAdapter.RecentCallViewHolder$bindCmStat(cmStatClientsHolder, cmStatClientsIcon, cmStatClients, cmContact.relatedClients.size, statTextSize)</ID>
+    <ID>MaxLineLength:RecentCallsAdapter.kt$RecentCallsAdapter.RecentCallViewHolder$bindCmStat(cmStatPropertiesHolder, cmStatPropertiesIcon, cmStatProperties, cmContact.relatedProperties.size, statTextSize)</ID>
     <ID>MaxLineLength:RecentCallsAdapter.kt$RecentCallsAdapter.RecentCallViewHolder$call.startTS.formatDateOrTime(context, hideTimeOnOtherDays = false, showCurrentYear = false, hideTodaysDate = false)</ID>
     <ID>MaxLineLength:RecentCallsAdapter.kt$RecentCallsAdapter.RecentCallViewHolder$nameToShow = SpannableString(nameToShow.toString().highlightTextPart(textToHighlight, properPrimaryColor))</ID>
     <ID>MaxLineLength:RecentCallsAdapter.kt$RecentCallsAdapter.RecentCallViewHolder$val shouldShowDuration = call.type != Calls.MISSED_TYPE &amp;&amp; call.type != Calls.REJECTED_TYPE &amp;&amp; call.duration &gt; 0</ID>
     <ID>MaxLineLength:RecentCallsAdapter.kt$RecentCallsDiffCallback$oldItem is CallLogItem.Date &amp;&amp; newItem is CallLogItem.Date -&gt; oldItem.timestamp == newItem.timestamp &amp;&amp; oldItem.dayCode == newItem.dayCode</ID>
     <ID>MaxLineLength:RecentCallsAdapter.kt$RecentCallsDiffCallback$override fun areItemsTheSame(oldItem: CallLogItem, newItem: CallLogItem)</ID>
     <ID>MaxLineLength:RecentsFragment.kt$RecentsFragment$private</ID>
-    <ID>MaxLineLength:RecentsFragment.kt$RecentsFragment$return (activity as MainActivity).cachedContacts.find { it.name == recentCall.name &amp;&amp; it.doesHavePhoneNumber(recentCall.phoneNumber) }</ID>
     <ID>MaxLineLength:RecentsFragment.kt$RecentsFragment$val contact = contactsWithNumbers.firstOrNull { it.phoneNumbers.first().normalizedNumber == call.phoneNumber }</ID>
     <ID>MaxLineLength:RecentsHelper.kt$RecentsHelper$contacts.firstOrNull { it.contactId == contactIdWithMultipleNumbers }?.phoneNumbers?.firstOrNull { it.value == number }</ID>
     <ID>MaxLineLength:RecentsHelper.kt$RecentsHelper$if</ID>
@@ -124,24 +134,35 @@
     <ID>NewLineAtEndOfFile:RecentCallsAdapter.kt$org.fossify.phone.adapters.RecentCallsAdapter.kt</ID>
     <ID>SwallowedException:CallActivity.kt$CallActivity$e: Exception</ID>
     <ID>SwallowedException:CallContactHelper.kt$e: NullPointerException</ID>
+    <ID>SwallowedException:CmAddNoteDialog.kt$CmAddNoteDialog$e: CmApiException</ID>
+    <ID>SwallowedException:CmSaveContactDialog.kt$CmSaveContactDialog$e: CmApiException</ID>
+    <ID>SwallowedException:CmSyncManager.kt$CmSyncManager$e: Exception</ID>
     <ID>SwallowedException:FastScrollerView.kt$e: IndexOutOfBoundsException</ID>
+    <ID>ThrowsCount:HttpCmApi.kt$HttpCmApi$private fun &lt;T&gt; request( builder: Request.Builder, authenticated: Boolean, deserializer: kotlinx.serialization.DeserializationStrategy&lt;T&gt;, ): T</ID>
     <ID>TooGenericExceptionCaught:CallActivity.kt$CallActivity$e: Exception</ID>
     <ID>TooGenericExceptionCaught:CallContactHelper.kt$e: NullPointerException</ID>
+    <ID>TooGenericExceptionCaught:CmFragment.kt$CmFragment$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:CmSyncManager.kt$CmSyncManager$e: Exception</ID>
     <ID>TooGenericExceptionCaught:DialerActivity.kt$DialerActivity$e: Exception</ID>
     <ID>TooGenericExceptionCaught:FastScrollerView.kt$e: IndexOutOfBoundsException</ID>
+    <ID>TooGenericExceptionCaught:HttpCmApi.kt$HttpCmApi$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:HttpCmApi.kt$HttpCmApi$e: RuntimeException</ID>
     <ID>TooGenericExceptionCaught:SettingsActivity.kt$SettingsActivity$e: Exception</ID>
     <ID>TooManyFunctions:CallActivity.kt$CallActivity : SimpleActivity</ID>
     <ID>TooManyFunctions:CallManager.kt$CallManager$Companion</ID>
+    <ID>TooManyFunctions:CmContactStore.kt$CmContactStore</ID>
+    <ID>TooManyFunctions:CmContactsAdapter.kt$CmContactsAdapter : MyRecyclerViewAdapter</ID>
+    <ID>TooManyFunctions:CmFragment.kt$CmFragment : MyViewPagerFragmentRefreshItemsListener</ID>
     <ID>TooManyFunctions:ConferenceCallsAdapter.kt$ConferenceCallsAdapter : MyRecyclerViewAdapter</ID>
     <ID>TooManyFunctions:ContactsAdapter.kt$ContactsAdapter : MyRecyclerViewAdapterItemTouchHelperContractMyZoomListener</ID>
     <ID>TooManyFunctions:DialpadActivity.kt$DialpadActivity : SimpleActivity</ID>
-    <ID>TooManyFunctions:FavoritesFragment.kt$FavoritesFragment : MyViewPagerFragmentRefreshItemsListener</ID>
     <ID>TooManyFunctions:MainActivity.kt$MainActivity : SimpleActivity</ID>
     <ID>TooManyFunctions:RecentCallsAdapter.kt$RecentCallsAdapter : MyRecyclerViewListAdapter</ID>
     <ID>TooManyFunctions:RecentsFragment.kt$RecentsFragment : MyViewPagerFragmentRefreshItemsListener</ID>
     <ID>TooManyFunctions:SettingsActivity.kt$SettingsActivity : SimpleActivity</ID>
     <ID>TooManyFunctions:SpeedDialAdapter.kt$SpeedDialAdapter : MyRecyclerViewAdapter</ID>
     <ID>UnusedParameter:CallActivity.kt$CallActivity$view: View</ID>
+    <ID>UnusedParameter:CmFragment.kt$CmFragment$event: CmContactsUpdatedEvent</ID>
     <ID>UnusedParameter:MainActivity.kt$MainActivity$event: Events.RefreshCallLog</ID>
     <ID>UtilityClassWithPublicConstructor:CallManager.kt$CallManager</ID>
     <ID>WildcardImport:CallActivity.kt$import org.fossify.commons.extensions.*</ID>

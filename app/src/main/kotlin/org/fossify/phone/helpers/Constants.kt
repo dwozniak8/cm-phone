@@ -20,6 +20,21 @@ const val DIALPAD_BEEPS = "dialpad_beeps"
 const val HIDE_DIALPAD_NUMBERS = "hide_dialpad_numbers"
 const val ALWAYS_SHOW_FULLSCREEN = "always_show_fullscreen"
 
+// CM integration
+const val CM_BASE_URL = "cm_base_url"
+const val CM_PAIRING_URL = "cm_pairing_url"
+const val CM_APP_URL = "cm_app_url"
+const val CM_LAST_SYNC_TS = "cm_last_sync_ts"
+// example CM service address, pre-filled on the pairing screen (replace later)
+const val DEFAULT_CM_PAIRING_URL = "https://app.crm.example"
+const val DEFAULT_CM_APP_URL = "https://app.crm.example"
+const val CM_SYNC_INTERVAL_MS = 4 * 60 * 60 * 1000L
+const val CM_CONTACT_ID = "cm_contact_id"
+
+// deep-link paths into the CM web app, joined onto cmAppUrl
+const val CM_PROPERTY_PATH = "/app/builds"
+const val CM_CLIENT_PATH = "/app/clients"
+
 const val ALL_TABS_MASK = TAB_CONTACTS or TAB_FAVORITES or TAB_CALL_HISTORY
 
 val tabsList = arrayListOf(TAB_CONTACTS, TAB_FAVORITES, TAB_CALL_HISTORY)

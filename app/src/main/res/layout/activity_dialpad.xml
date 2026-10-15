@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/dialpad_coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -30,6 +31,36 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <org.fossify.commons.views.MyTextView
+            android:id="@+id/dialpad_cm_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorControlHighlight"
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/activity_margin"
+            android:paddingTop="@dimen/normal_margin"
+            android:paddingEnd="@dimen/activity_margin"
+            android:paddingBottom="@dimen/normal_margin"
+            android:text="@string/cm_dialer_check_hint"
+            android:textSize="@dimen/bigger_text_size"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
+        <LinearLayout
+            android:id="@+id/dialpad_cm_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dialpad_cm_hint"
+            tools:visibility="visible" />
+
+        <org.fossify.commons.views.MyTextView
             android:id="@+id/dialpad_placeholder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -44,7 +75,7 @@
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/dialpad_cm_list" />
 
         <org.fossify.commons.views.MyRecyclerView
             android:id="@+id/dialpad_list"
@@ -54,7 +85,7 @@
             android:scrollbars="none"
             app:layoutManager="org.fossify.commons.views.MyLinearLayoutManager"
             app:layout_constraintBottom_toTopOf="@+id/dialpad_input"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/dialpad_cm_list" />
 
         <com.reddit.indicatorfastscroll.FastScrollerView
             android:id="@+id/letter_fastscroller"

@@ -42,11 +42,18 @@ import org.fossify.commons.helpers.LOWER_ALPHA_INT
 import org.fossify.commons.helpers.MyContactsContentProvider
 import org.fossify.commons.helpers.NavigationIcon
 import org.fossify.commons.helpers.REQUEST_CODE_SET_DEFAULT_DIALER
+import org.fossify.commons.helpers.ensureBackgroundThread
 import org.fossify.commons.helpers.isOreoPlus
 import org.fossify.commons.models.contacts.Contact
 import org.fossify.phone.R
 import org.fossify.phone.adapters.ContactsAdapter
+import org.fossify.phone.cm.CmAvatar
+import org.fossify.phone.cm.CmContact
+import org.fossify.phone.cm.CmContactStore
+import org.fossify.phone.cm.toCmNumberKey
 import org.fossify.phone.databinding.ActivityDialpadBinding
+import org.fossify.phone.databinding.ItemCmContactBinding
+import org.fossify.phone.dialogs.CmContactActionsMenu
 import org.fossify.phone.extensions.addCharacter
 import org.fossify.phone.extensions.areMultipleSIMsAvailable
 import org.fossify.phone.extensions.boundingBox
@@ -63,6 +70,8 @@ import org.fossify.phone.helpers.ToneGeneratorHelper
 import org.fossify.phone.models.SpeedDial
 import java.util.Locale
 import kotlin.math.roundToInt
+
+private const val CM_DIALPAD_MAX_RESULTS = 8
 
 class DialpadActivity : SimpleActivity() {
     private val binding by viewBinding(ActivityDialpadBinding::inflate)
@@ -145,6 +154,7 @@ class DialpadActivity : SimpleActivity() {
         setupOptionsMenu()
         speedDialValues = config.getSpeedDialValues()
         privateCursor = getMyContactsCursor(favoritesOnly = false, withPhoneNumbersOnly = true)
+        ensureBackgroundThread { CmContactStore.ensureLoaded(this) }
 
         toneGeneratorHelper = ToneGeneratorHelper(this, DIALPAD_TONE_LENGTH_MS)
 
@@ -312,6 +322,19 @@ class DialpadActivity : SimpleActivity() {
 
         (binding.dialpadList.adapter as? ContactsAdapter)?.finishActMode()
 
+        // CM contacts matching the input are shown first, in their own section
+        // above the system-contact results. The reminder shows only when there
+        // actually is a CM match.
+        CmContactStore.ensureLoaded(this)
+        val cmMatches = if (text.isEmpty()) {
+            emptyList()
+        } else {
+            CmContactStore.getAll().filter { cmContactMatchesInput(it, text) }
+        }
+        binding.dialpadCmHint.beVisibleIf(cmMatches.isNotEmpty())
+        renderCmMatches(cmMatches)
+        val cmNumberKeys = cmMatches.flatMap { it.phoneNumbers }.map { it.number.toCmNumberKey() }.toHashSet()
+
         val filtered = allContacts.filter { contact ->
             var convertedName = KeypadHelper.convertKeypadLettersToDigits(
                 contact.name.normalizeString()
@@ -326,7 +349,8 @@ class DialpadActivity : SimpleActivity() {
                 convertedName = currConvertedName
             }
 
-            contact.doesContainPhoneNumber(text) || (convertedName.contains(text, true))
+            val matches = contact.doesContainPhoneNumber(text) || (convertedName.contains(text, true))
+            matches && contact.phoneNumbers.none { it.value.toCmNumberKey() in cmNumberKeys }
         }.sortedWith(compareBy {
             !it.doesContainPhoneNumber(text)
         }).toMutableList() as ArrayList<Contact>
@@ -348,8 +372,48 @@ class DialpadActivity : SimpleActivity() {
             binding.dialpadList.adapter = this
         }
 
-        binding.dialpadPlaceholder.beVisibleIf(filtered.isEmpty())
+        binding.dialpadPlaceholder.beVisibleIf(filtered.isEmpty() && cmMatches.isEmpty())
         binding.dialpadList.beVisibleIf(filtered.isNotEmpty())
+    }
+
+    private fun cmContactMatchesInput(cmContact: CmContact, text: String): Boolean {
+        val textDigits = text.filter(Char::isDigit)
+        if (textDigits.isNotEmpty() &&
+            cmContact.phoneNumbers.any { it.number.filter(Char::isDigit).contains(textDigits) }
+        ) {
+            return true
+        }
+
+        val convertedName = KeypadHelper.convertKeypadLettersToDigits(cmContact.fullName.normalizeString())
+            .filterNot { it.isWhitespace() }
+        return convertedName.contains(text, ignoreCase = true)
+    }
+
+    private fun renderCmMatches(matches: List<CmContact>) {
+        val holder = binding.dialpadCmList
+        holder.removeAllViews()
+        holder.beVisibleIf(matches.isNotEmpty())
+        if (matches.isEmpty()) {
+            return
+        }
+
+        val textColor = getProperTextColor()
+        matches.take(CM_DIALPAD_MAX_RESULTS).forEach { cmContact ->
+            val row = ItemCmContactBinding.inflate(layoutInflater, holder, false)
+            val name = cmContact.fullName.ifBlank { cmContact.primaryNumber }
+            row.cmContactName.text = name
+            row.cmContactName.setTextColor(textColor)
+            row.cmContactNumber.text = cmContact.primaryNumber
+            row.cmContactNumber.setTextColor(textColor)
+            CmAvatar.apply(row.cmContactImage, cmContact.id)
+            row.root.setOnClickListener { anchor ->
+                CmContactActionsMenu.show(this, anchor, cmContact.primaryNumber, name) {
+                    startCallWithConfirmationCheck(cmContact.primaryNumber, name)
+                    clearInputWithDelay()
+                }
+            }
+            holder.addView(row.root)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
