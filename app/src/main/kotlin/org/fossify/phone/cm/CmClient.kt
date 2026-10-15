@@ -39,15 +39,19 @@ object CmClient {
      * network on a background thread; failures are ignored.
      */
     fun revokeDeviceAsync(context: Context) {
-        val baseUrl = context.config.cmBaseUrl.trim()
-        val accessToken = context.cmAuthStore.accessToken
-        if (isFakeUrl(baseUrl) || accessToken.isNullOrBlank()) {
+        revokeDeviceAsync(context.config.cmBaseUrl, context.cmAuthStore.accessToken)
+    }
+
+    /** As [revokeDeviceAsync], for a previously snapshotted pairing (e.g. one just replaced). */
+    fun revokeDeviceAsync(baseUrl: String, accessToken: String?) {
+        val url = baseUrl.trim()
+        if (isFakeUrl(url) || accessToken.isNullOrBlank()) {
             return
         }
 
         ensureBackgroundThread {
             try {
-                HttpCmApi(baseUrl = baseUrl, accessTokenProvider = { accessToken }).unpairDevice()
+                HttpCmApi(baseUrl = url, accessTokenProvider = { accessToken }).unpairDevice()
             } catch (e: CmApiException) {
                 // ignored - the device is unpaired locally regardless
             }

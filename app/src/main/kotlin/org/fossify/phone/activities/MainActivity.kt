@@ -41,6 +41,7 @@ import org.fossify.phone.fragments.CmFragment
 import org.fossify.phone.fragments.ContactsFragment
 import org.fossify.phone.fragments.MyViewPagerFragment
 import org.fossify.phone.fragments.RecentsFragment
+import org.fossify.phone.helpers.OPEN_CM_TAB
 import org.fossify.phone.helpers.OPEN_DIAL_PAD_AT_LAUNCH
 import org.fossify.phone.helpers.RecentsHelper
 import org.fossify.phone.helpers.tabsList
@@ -157,6 +158,14 @@ class MainActivity : SimpleActivity() {
         storedShowTabs = config.showTabs
         storedStartNameWithSurname = config.startNameWithSurname
         config.lastUsedViewPagerPage = binding.viewPager.currentItem
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        if (intent.getBooleanExtra(OPEN_CM_TAB, false)) {
+            getCmTabIndex()?.let { binding.mainTabsHolder.getTabAt(it)?.select() }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
@@ -396,6 +405,11 @@ class MainActivity : SimpleActivity() {
                     wantedTab = binding.mainTabsHolder.tabCount - 1
                 }
 
+                // open the CM tab after a cmphone://pair auto-configuration link
+                if (intent.getBooleanExtra(OPEN_CM_TAB, false)) {
+                    getCmTabIndex()?.let { wantedTab = it }
+                }
+
                 binding.mainTabsHolder.getTabAt(wantedTab)?.select()
                 refreshMenuItems()
             }, 100L)
@@ -527,6 +541,12 @@ class MainActivity : SimpleActivity() {
     private fun getCmFragment(): CmFragment? = findViewById(R.id.cm_fragment)
 
     private fun getRecentsFragment(): RecentsFragment? = findViewById(R.id.recents_fragment)
+
+    private fun getCmTabIndex(): Int? {
+        val showTabsMask = config.showTabs
+        if (showTabsMask and TAB_FAVORITES == 0) return null
+        return if (showTabsMask and TAB_CONTACTS > 0) 1 else 0
+    }
 
     private fun getDefaultTab(): Int {
         val showTabsMask = config.showTabs

@@ -85,6 +85,8 @@
     <string name="cm_pairing_service_url">Adres serwera CM (API)</string>
     <string name="cm_pair_button">Sparuj</string>
     <string name="cm_autoconfig">Autokonfiguracja</string>
+    <string name="cm_autoconfig_pairing">Parowanie z CM…</string>
+    <string name="cm_autoconfig_invalid_link">Nieprawidłowy link autokonfiguracji - wygeneruj nowy w aplikacji CM</string>
     <string name="cm_pairing_success">Sparowano z %s</string>
     <string name="cm_pairing_failed">Nieprawidłowy lub wygasły kod parowania</string>
     <string name="cm_pairing_network_error">Nie udało się połączyć z aplikacją CM - sprawdź adres i połączenie</string>

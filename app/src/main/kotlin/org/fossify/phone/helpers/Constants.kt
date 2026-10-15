@@ -32,6 +32,11 @@ const val DEFAULT_CM_PAIRING_URL = BuildConfig.CM_PAIRING_URL
 const val DEFAULT_CM_APP_URL = "https://app.crm.example"
 const val CM_SYNC_INTERVAL_MS = 4 * 60 * 60 * 1000L
 const val CM_CONTACT_ID = "cm_contact_id"
+// MainActivity extra: select the CM tab (set after a cmphone://pair link)
+const val OPEN_CM_TAB = "open_cm_tab"
+// query params of the CM web app's auto-configuration link cmphone://pair?code=&service=
+const val CM_PAIR_PARAM_CODE = "code"
+const val CM_PAIR_PARAM_SERVICE = "service"
 
 // deep-link paths into the CM web app, joined onto cmAppUrl
 const val CM_PROPERTY_PATH = "/app/builds"
