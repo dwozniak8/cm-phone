@@ -2,11 +2,11 @@ package org.fossify.phone.activities
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
-import android.widget.LinearLayout
-import android.widget.TextView
-import androidx.annotation.StringRes
+import android.view.ViewGroup
 import org.fossify.commons.extensions.applyColorFilter
+import org.fossify.commons.extensions.beGone
 import org.fossify.commons.extensions.beGoneIf
 import org.fossify.commons.extensions.beVisibleIf
 import org.fossify.commons.extensions.getProperPrimaryColor
@@ -21,32 +21,47 @@ import org.fossify.phone.R
 import org.fossify.phone.cm.CmAvatar
 import org.fossify.phone.cm.CmContact
 import org.fossify.phone.cm.CmContactStore
-import org.fossify.phone.cm.CmRef
+import org.fossify.phone.cm.CmContactsUpdatedEvent
+import org.fossify.phone.cm.CmSyncManager
 import org.fossify.phone.databinding.ActivityCmContactBinding
 import org.fossify.phone.databinding.ItemCmNoteBinding
 import org.fossify.phone.databinding.ItemCmPhoneNumberBinding
-import org.fossify.phone.databinding.ItemCmRelatedBinding
+import org.fossify.phone.databinding.ItemCmRecordBinding
+import org.fossify.phone.dialogs.CmAddNoteDialog
 import org.fossify.phone.extensions.config
 import org.fossify.phone.extensions.startCallWithConfirmationCheck
 import org.fossify.phone.helpers.CM_CLIENT_PATH
 import org.fossify.phone.helpers.CM_CONTACT_ID
 import org.fossify.phone.helpers.CM_PROPERTY_PATH
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 /**
  * Read-only detail view for a single CM contact. Everything comes from the local
- * [CmContactStore] cache, so it works offline.
+ * [CmContactStore] cache, so it works offline; opening the screen also kicks a
+ * best-effort [CmSyncManager] refresh and re-renders if it brings newer data.
  *
- * Notes, related properties and related prospects are three collapsible sections
- * titled "<name> (<count>)"; opening one closes the others. Every property /
- * prospect row has an "open in CM" button that deep-links into the CM web app.
+ * The body is a single collapsible list of records - the contact first, then its
+ * related properties / clients, each with a type icon on the left. Expanding a
+ * row reveals that record's notes; opening one collapses the others. Property /
+ * client rows also carry an "open in CM" deep-link button. The toolbar overflow
+ * mirrors the call-history contact menu ("Dopisz notatkę" / "Zadzwoń").
  */
 class CmContactActivity : SimpleActivity() {
     private val binding by viewBinding(ActivityCmContactBinding::inflate)
 
-    private enum class Section { NOTES, PROPERTIES, CLIENTS }
-
     private var contact: CmContact? = null
-    private var expandedSection: Section? = null
+    private var expandedRecordIndex: Int? = null
+    private val recordChevrons = mutableListOf<View>()
+    private val recordNoteContainers = mutableListOf<View>()
+
+    private data class RecordRow(
+        val label: String,
+        val iconRes: Int,
+        val notes: List<String>,
+        val deepLink: String?,
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +69,16 @@ class CmContactActivity : SimpleActivity() {
 
         setupEdgeToEdge(padBottomSystem = listOf(binding.cmContactScrollview))
         setupMaterialScrollListener(binding.cmContactScrollview, binding.cmContactAppbar)
+
+        binding.cmContactToolbar.apply {
+            menu.findItem(R.id.cm_action_save).isVisible = false
+            menu.findItem(R.id.cm_action_open_details).isVisible = false
+            setOnMenuItemClickListener { onMenuItemClick(it) }
+        }
+
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this)
+        }
 
         ensureBackgroundThread {
             CmContactStore.ensureLoaded(this)
@@ -65,6 +90,9 @@ class CmContactActivity : SimpleActivity() {
                 } else {
                     contact = loaded
                     bindContact(loaded)
+                    // Pull the latest from the server; a successful sync posts
+                    // CmContactsUpdatedEvent -> onContactsUpdated re-renders.
+                    CmSyncManager.syncNow(this, null)
                 }
             }
         }
@@ -76,50 +104,55 @@ class CmContactActivity : SimpleActivity() {
         updateTextColors(binding.cmContactScrollview)
     }
 
+    override fun onDestroy() {
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this)
+        }
+        super.onDestroy()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onContactsUpdated(event: CmContactsUpdatedEvent) {
+        reloadContact()
+    }
+
+    private fun onMenuItemClick(item: MenuItem): Boolean {
+        val current = contact ?: return false
+        return when (item.itemId) {
+            R.id.cm_action_add_note -> {
+                CmAddNoteDialog(this, current) { reloadContact() }
+                true
+            }
+
+            R.id.cm_action_call -> {
+                startCallWithConfirmationCheck(current.primaryNumber, displayName(current))
+                true
+            }
+
+            else -> false
+        }
+    }
+
+    private fun reloadContact() {
+        val id = contact?.id ?: return
+        CmContactStore.findById(id)?.let {
+            contact = it
+            bindContact(it)
+        }
+    }
+
+    private fun displayName(contact: CmContact) = contact.fullName.ifBlank { contact.primaryNumber }
+
     private fun bindContact(contact: CmContact) {
-        val displayName = contact.fullName.ifBlank { contact.primaryNumber }
-        binding.cmContactToolbar.title = displayName
-        binding.cmContactName.text = displayName
+        val name = displayName(contact)
+        binding.cmContactToolbar.title = name
+        binding.cmContactName.text = name
         CmAvatar.apply(binding.cmContactPhoto, contact.id)
 
-        buildPhoneNumberRows(contact, displayName)
-
-        populateNotes(contact.notes)
-        populateRelated(binding.cmContactPropertyList, contact.relatedProperties, CM_PROPERTY_PATH)
-        populateRelated(binding.cmContactClientList, contact.relatedClients, CM_CLIENT_PATH)
-
-        setupSection(
-            binding.cmContactNoteHolder, binding.cmContactNoteHeader, binding.cmContactNoteLabel,
-            R.string.cm_detail_notes, contact.notes.size, Section.NOTES,
-        )
-        setupSection(
-            binding.cmContactPropertyHolder, binding.cmContactPropertyHeader, binding.cmContactPropertyLabel,
-            R.string.cm_detail_properties, contact.relatedProperties.size, Section.PROPERTIES,
-        )
-        setupSection(
-            binding.cmContactClientHolder, binding.cmContactClientHeader, binding.cmContactClientLabel,
-            R.string.cm_detail_clients, contact.relatedClients.size, Section.CLIENTS,
-        )
-
-        expandedSection = when {
-            contact.notes.isNotEmpty() -> Section.NOTES
-            contact.relatedProperties.isNotEmpty() -> Section.PROPERTIES
-            contact.relatedClients.isNotEmpty() -> Section.CLIENTS
-            else -> null
-        }
-        applyExpansion(animate = false)
+        buildPhoneNumberRows(contact, name)
+        renderRecords(contact, name)
 
         updateTextColors(binding.cmContactScrollview)
-
-        val primaryColor = getProperPrimaryColor()
-        binding.cmContactNoteLabel.setTextColor(primaryColor)
-        binding.cmContactPropertyLabel.setTextColor(primaryColor)
-        binding.cmContactClientLabel.setTextColor(primaryColor)
-
-        val textColor = getProperTextColor()
-        binding.cmContactNoteChevron.applyColorFilter(textColor)
-        binding.cmContactPropertyChevron.applyColorFilter(textColor)
-        binding.cmContactClientChevron.applyColorFilter(textColor)
     }
 
     private fun buildPhoneNumberRows(contact: CmContact, displayName: String) {
@@ -141,78 +174,97 @@ class CmContactActivity : SimpleActivity() {
         }
     }
 
-    private fun populateNotes(notes: List<String>) {
-        val list = binding.cmContactNoteList
-        list.removeAllViews()
-        val inflater = LayoutInflater.from(this)
-        notes.forEach { note ->
-            val row = ItemCmNoteBinding.inflate(inflater, list, false)
-            row.cmNoteText.text = note
-            list.addView(row.root)
-        }
-    }
-
-    private fun populateRelated(list: LinearLayout, refs: List<CmRef>, path: String) {
-        list.removeAllViews()
-        if (refs.isEmpty()) {
-            return
-        }
+    private fun renderRecords(contact: CmContact, displayName: String) {
+        val holder = binding.cmContactRecords
+        holder.removeAllViews()
+        recordChevrons.clear()
+        recordNoteContainers.clear()
 
         val inflater = LayoutInflater.from(this)
+        val textColor = getProperTextColor()
         val primaryColor = getProperPrimaryColor()
         val appUrl = config.cmAppUrl.trimEnd('/')
 
-        refs.forEach { ref ->
-            val row = ItemCmRelatedBinding.inflate(inflater, list, false)
-            row.cmRelatedLabel.text = ref.label
-            row.cmRelatedOpen.applyColorFilter(primaryColor)
-
-            val open = { launchViewIntent("$appUrl$path/${ref.id}") }
-            row.root.setOnClickListener { open() }
-            row.cmRelatedOpen.setOnClickListener { open() }
-            list.addView(row.root)
+        val rows = buildList {
+            add(RecordRow(displayName, R.drawable.ic_person_small_vector, contact.notes, null))
+            contact.relatedProperties.forEach {
+                add(RecordRow(it.label, R.drawable.ic_home_vector, it.notes, "$appUrl$CM_PROPERTY_PATH/${it.id}"))
+            }
+            contact.relatedClients.forEach {
+                add(RecordRow(it.label, R.drawable.ic_briefcase_vector, it.notes, "$appUrl$CM_CLIENT_PATH/${it.id}"))
+            }
         }
+
+        rows.forEachIndexed { index, row ->
+            val view = ItemCmRecordBinding.inflate(inflater, holder, false)
+            view.cmRecordIcon.setImageResource(row.iconRes)
+            view.cmRecordIcon.applyColorFilter(textColor)
+            view.cmRecordLabel.text = row.label
+            view.cmRecordLabel.setTextColor(textColor)
+            view.cmRecordChevron.applyColorFilter(textColor)
+
+            view.cmRecordOpen.beVisibleIf(row.deepLink != null)
+            row.deepLink?.let { link ->
+                view.cmRecordOpen.applyColorFilter(primaryColor)
+                view.cmRecordOpen.setOnClickListener { launchViewIntent(link) }
+            }
+
+            fillNotes(inflater, view.cmRecordNotes, row.notes, textColor)
+
+            view.cmRecordHeader.setOnClickListener { toggleRecord(index) }
+            recordChevrons.add(view.cmRecordChevron)
+            recordNoteContainers.add(view.cmRecordNotes)
+            holder.addView(view.root)
+        }
+
+        expandedRecordIndex = if (rows.isEmpty()) null else 0
+        applyRecordExpansion(animate = false)
     }
 
-    private fun setupSection(
-        holder: View,
-        header: View,
-        label: TextView,
-        @StringRes titleRes: Int,
-        count: Int,
-        section: Section,
-    ) {
-        holder.beGoneIf(count == 0)
-        if (count == 0) {
+    private fun fillNotes(inflater: LayoutInflater, container: ViewGroup, notes: List<String>, textColor: Int) {
+        if (notes.isEmpty()) {
+            val row = ItemCmNoteBinding.inflate(inflater, container, false)
+            row.cmNoteBullet.beGone()
+            row.cmNoteText.apply {
+                text = getString(R.string.cm_record_no_notes)
+                setTextColor(textColor)
+                alpha = EMPTY_NOTE_ALPHA
+            }
+            container.addView(row.root)
             return
         }
-        label.text = getString(R.string.cm_section_title, getString(titleRes), count)
-        header.setOnClickListener { toggleSection(section) }
+
+        notes.forEach { note ->
+            val row = ItemCmNoteBinding.inflate(inflater, container, false)
+            row.cmNoteText.text = note
+            row.cmNoteText.setTextColor(textColor)
+            container.addView(row.root)
+        }
     }
 
-    private fun toggleSection(section: Section) {
-        expandedSection = if (expandedSection == section) null else section
-        applyExpansion(animate = true)
+    private fun toggleRecord(index: Int) {
+        expandedRecordIndex = if (expandedRecordIndex == index) null else index
+        applyRecordExpansion(animate = true)
     }
 
-    private fun applyExpansion(animate: Boolean) {
-        setSectionExpanded(binding.cmContactNoteList, binding.cmContactNoteChevron, expandedSection == Section.NOTES, animate)
-        setSectionExpanded(binding.cmContactPropertyList, binding.cmContactPropertyChevron, expandedSection == Section.PROPERTIES, animate)
-        setSectionExpanded(binding.cmContactClientList, binding.cmContactClientChevron, expandedSection == Section.CLIENTS, animate)
-    }
+    private fun applyRecordExpansion(animate: Boolean) {
+        recordNoteContainers.forEachIndexed { index, notes ->
+            val expanded = expandedRecordIndex == index
+            notes.beVisibleIf(expanded)
 
-    private fun setSectionExpanded(list: View, chevron: View, expanded: Boolean, animate: Boolean) {
-        list.beVisibleIf(expanded)
-        val targetRotation = if (expanded) CHEVRON_EXPANDED_ROTATION else 0f
-        if (animate) {
-            chevron.animate().rotation(targetRotation).setDuration(CHEVRON_ROTATION_MS).start()
-        } else {
-            chevron.rotation = targetRotation
+            val targetRotation = if (expanded) CHEVRON_EXPANDED_ROTATION else 0f
+            val chevron = recordChevrons[index]
+            if (animate) {
+                chevron.animate().rotation(targetRotation).setDuration(CHEVRON_ROTATION_MS).start()
+            } else {
+                chevron.rotation = targetRotation
+            }
         }
     }
 
     companion object {
         private const val CHEVRON_EXPANDED_ROTATION = 180f
         private const val CHEVRON_ROTATION_MS = 150L
+        private const val EMPTY_NOTE_ALPHA = 0.6f
     }
 }

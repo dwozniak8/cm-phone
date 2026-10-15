@@ -80,13 +80,15 @@
 
     <!-- Integracja CM -->
     <string name="cm_tab">CM</string>
-    <string name="cm_pairing_prompt">Podaj kod parowania i adres aplikacji CM</string>
+    <string name="cm_pairing_prompt">Podaj kod parowania i adres API CM</string>
     <string name="cm_pairing_code_hint">Kod parowania</string>
-    <string name="cm_pairing_service_url">Adres aplikacji CM</string>
+    <string name="cm_pairing_service_url">Adres serwera CM (API)</string>
     <string name="cm_pair_button">Sparuj</string>
     <string name="cm_autoconfig">Autokonfiguracja</string>
+    <string name="cm_autoconfig_pairing">Parowanie z CM…</string>
+    <string name="cm_autoconfig_invalid_link">Nieprawidłowy link autokonfiguracji - wygeneruj nowy w aplikacji CM</string>
     <string name="cm_pairing_success">Sparowano z %s</string>
-    <string name="cm_pairing_failed">Nieprawidłowy kod parowania</string>
+    <string name="cm_pairing_failed">Nieprawidłowy lub wygasły kod parowania</string>
     <string name="cm_pairing_network_error">Nie udało się połączyć z aplikacją CM - sprawdź adres i połączenie</string>
     <string name="cm_paired_empty">Brak kontaktów CM. Kliknij, aby zaktualizować bazę.</string>
     <string name="cm_update_database">Zaktualizuj bazę</string>
@@ -96,7 +98,6 @@
     <string name="cm_detail_notes">Notatki</string>
     <string name="cm_detail_properties">Powiązane nieruchomości</string>
     <string name="cm_detail_clients">Powiązani klienci poszukujący</string>
-    <string name="cm_section_title">%1$s (%2$d)</string>
     <string name="cm_contact_badge">Kontakt z aplikacji</string>
     <string name="cm_dialer_check_hint">Wprowadzany kontakt jest już w aplikacji.</string>
     <string name="cm_save_in_app">Zapisz w aplikacji</string>
@@ -109,7 +110,12 @@
     <string name="cm_first_name_required">Podaj imię</string>
     <string name="cm_saved">Zapisano w aplikacji</string>
     <string name="cm_save_failed">Nie udało się zapisać w aplikacji</string>
+    <string name="cm_contact_already_exists">Ten kontakt jest już w aplikacji</string>
+    <string name="cm_invalid_phone_number">Nieprawidłowy numer telefonu</string>
     <string name="cm_note_added">Notatka dodana</string>
+    <string name="cm_note_target">Notatka dotyczy</string>
+    <string name="cm_note_target_contact">Kontakt: %s</string>
+    <string name="cm_record_no_notes">Brak notatek</string>
     <string name="cm_open_in_cm">Otwórz w CM</string>
     <string name="cm_bullet">•</string>
     <string name="cm_settings_unpair">Rozparuj urządzenie</string>

@@ -43,17 +43,20 @@ class CmAuthStore(context: Context) {
         get() = !accessToken.isNullOrEmpty()
 
     fun save(response: PairResponse) {
+        val user = response.user
         prefs.edit {
             putString(KEY_ACCESS_TOKEN, response.accessToken)
             putString(KEY_REFRESH_TOKEN, response.refreshToken)
-            putString(KEY_USER_NAME, response.user?.name)
+            // user.name may be "" for a CM user with no name set
+            putString(KEY_USER_NAME, user?.name?.takeIf { it.isNotBlank() } ?: user?.id)
         }
     }
 
     fun save(response: RefreshResponse) {
         prefs.edit {
             putString(KEY_ACCESS_TOKEN, response.accessToken)
-            if (response.refreshToken != null) {
+            // the server rotates the refresh token on every call - always persist it
+            if (!response.refreshToken.isNullOrBlank()) {
                 putString(KEY_REFRESH_TOKEN, response.refreshToken)
             }
         }

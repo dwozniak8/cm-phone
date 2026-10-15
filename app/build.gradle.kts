@@ -22,6 +22,15 @@ fun hasSigningVars(): Boolean {
             && providers.environmentVariable("SIGNING_STORE_PASSWORD").orNull != null
 }
 
+// Default CM API address shown on the pairing screen. Override per machine with
+// `cm.pairingUrl=http://<lan-ip>:8888` in local.properties (physical device on LAN).
+val localProperties = Properties()
+val localPropertiesFile: File = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(FileInputStream(localPropertiesFile))
+}
+val cmPairingUrl: String = localProperties.getProperty("cm.pairingUrl") ?: "http://10.0.2.2:8888"
+
 base {
     val versionCode = project.property("VERSION_CODE").toString().toInt()
     archivesName = "phone-$versionCode"
@@ -36,6 +45,7 @@ android {
         targetSdk = project.libs.versions.app.build.targetSDK.get().toInt()
         versionName = project.property("VERSION_NAME").toString()
         versionCode = project.property("VERSION_CODE").toString().toInt()
+        buildConfigField("String", "CM_PAIRING_URL", "\"$cmPairingUrl\"")
     }
 
     signingConfigs {

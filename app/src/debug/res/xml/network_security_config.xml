@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Debug-only. Lets the app talk to a plain-HTTP CM API running on localhost
+    during development (real builds stay HTTPS-only). Covers the Android emulator
+    host (10.0.2.2) and `adb reverse` / physical-device-on-LAN via localhost.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/cm_related_holder"
+    android:id="@+id/cm_note_target_row"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
@@ -11,25 +11,25 @@
     android:orientation="horizontal"
     android:paddingStart="@dimen/activity_margin"
     android:paddingTop="@dimen/normal_margin"
-    android:paddingEnd="@dimen/small_margin"
+    android:paddingEnd="@dimen/activity_margin"
     android:paddingBottom="@dimen/normal_margin">
 
+    <ImageView
+        android:id="@+id/cm_note_target_icon"
+        android:layout_width="@dimen/normal_icon_size"
+        android:layout_height="@dimen/normal_icon_size"
+        android:layout_marginEnd="@dimen/normal_margin"
+        android:contentDescription="@null"
+        android:padding="@dimen/small_margin"
+        tools:src="@drawable/ic_home_vector" />
+
     <org.fossify.commons.views.MyTextView
-        android:id="@+id/cm_related_label"
+        android:id="@+id/cm_note_target_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textIsSelectable="true"
+        android:textDirection="firstStrongLtr"
         android:textSize="@dimen/bigger_text_size"
         tools:text="ul. Długa 4/12, Gdańsk" />
-
-    <ImageView
-        android:id="@+id/cm_related_open"
-        android:layout_width="@dimen/normal_icon_size"
-        android:layout_height="@dimen/normal_icon_size"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/cm_open_in_cm"
-        android:padding="@dimen/small_margin"
-        android:src="@drawable/ic_open_in_new_vector" />
 
 </LinearLayout>

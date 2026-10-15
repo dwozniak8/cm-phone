@@ -3,6 +3,7 @@ package org.fossify.phone.helpers
 import org.fossify.commons.helpers.TAB_CALL_HISTORY
 import org.fossify.commons.helpers.TAB_CONTACTS
 import org.fossify.commons.helpers.TAB_FAVORITES
+import org.fossify.phone.BuildConfig
 
 // shared prefs
 const val SPEED_DIAL = "speed_dial"
@@ -25,11 +26,17 @@ const val CM_BASE_URL = "cm_base_url"
 const val CM_PAIRING_URL = "cm_pairing_url"
 const val CM_APP_URL = "cm_app_url"
 const val CM_LAST_SYNC_TS = "cm_last_sync_ts"
-// example CM service address, pre-filled on the pairing screen (replace later)
-const val DEFAULT_CM_PAIRING_URL = "https://app.crm.example"
+// CM API base URL pre-filled on the pairing screen. 10.0.2.2 is the dev
+// machine as seen from the Android emulator; change for a real deployment.
+const val DEFAULT_CM_PAIRING_URL = BuildConfig.CM_PAIRING_URL
 const val DEFAULT_CM_APP_URL = "https://app.crm.example"
 const val CM_SYNC_INTERVAL_MS = 4 * 60 * 60 * 1000L
 const val CM_CONTACT_ID = "cm_contact_id"
+// MainActivity extra: select the CM tab (set after a cmphone://pair link)
+const val OPEN_CM_TAB = "open_cm_tab"
+// query params of the CM web app's auto-configuration link cmphone://pair?code=&service=
+const val CM_PAIR_PARAM_CODE = "code"
+const val CM_PAIR_PARAM_SERVICE = "service"
 
 // deep-link paths into the CM web app, joined onto cmAppUrl
 const val CM_PROPERTY_PATH = "/app/builds"

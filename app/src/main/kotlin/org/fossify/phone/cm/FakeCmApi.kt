@@ -9,6 +9,7 @@ class FakeCmApi : CmApi {
 
     private val contacts = sampleContacts().toMutableList()
     private var counter = contacts.size
+    private var refreshCounter = 0
 
     override fun pair(code: String): PairResponse {
         if (code.trim().length !in VALID_CODE_LENGTH) {
@@ -26,12 +27,15 @@ class FakeCmApi : CmApi {
     }
 
     override fun refresh(refreshToken: String): RefreshResponse {
+        refreshCounter++
         return RefreshResponse(
-            accessToken = "fake-access-token-refreshed",
-            refreshToken = "fake-refresh-token",
+            accessToken = "fake-access-token-$refreshCounter",
+            refreshToken = "fake-refresh-token-$refreshCounter",
             expiresInSec = 3600,
         )
     }
+
+    override fun unpairDevice() = Unit
 
     override fun getContacts(sinceMillis: Long?): List<CmContact> {
         return contacts.toList()
@@ -51,16 +55,33 @@ class FakeCmApi : CmApi {
         return created
     }
 
-    override fun addNote(contactId: String, note: String): CmContact {
+    override fun addNote(contactId: String, note: String, target: NoteTarget?): CmContact {
         val index = contacts.indexOfFirst { it.id == contactId }
         if (index == -1) {
             throw CmApiException(statusCode = 404, message = "Unknown CM contact")
         }
 
-        val updated = contacts[index].copy(
-            notes = contacts[index].notes + note,
-            updatedAt = System.currentTimeMillis(),
-        )
+        val current = contacts[index]
+        val updated = when (target?.type) {
+            NoteTargetType.BUILD -> current.copy(
+                relatedProperties = current.relatedProperties.map {
+                    if (it.id == target.id) it.copy(notes = it.notes + note) else it
+                },
+                updatedAt = System.currentTimeMillis(),
+            )
+
+            NoteTargetType.CLIENT -> current.copy(
+                relatedClients = current.relatedClients.map {
+                    if (it.id == target.id) it.copy(notes = it.notes + note) else it
+                },
+                updatedAt = System.currentTimeMillis(),
+            )
+
+            else -> current.copy(
+                notes = current.notes + note,
+                updatedAt = System.currentTimeMillis(),
+            )
+        }
         contacts[index] = updated
         return updated
     }
@@ -80,11 +101,20 @@ class FakeCmApi : CmApi {
                     "Woli parter lub pierwsze piętro, bez windy odpada.",
                 ),
                 relatedProperties = listOf(
-                    CmRef("p9", "ul. Długa 4/12, Gdańsk"),
+                    CmRef(
+                        "p9", "ul. Długa 4/12, Gdańsk",
+                        notes = listOf(
+                            "Cena wywoławcza 780 tys., właściciel schodzi do 720.",
+                            "Klucze do odbioru w biurze, umówić oględziny.",
+                        ),
+                    ),
                     CmRef("p11", "ul. Podwale Staromiejskie 20/3, Gdańsk"),
                 ),
                 relatedClients = listOf(
-                    CmRef("cl3", "Biuro Nieruchomości XYZ"),
+                    CmRef(
+                        "cl3", "Biuro Nieruchomości XYZ",
+                        notes = listOf("Kontakt do agenta: Marek, tel. 600 300 300."),
+                    ),
                 ),
                 updatedAt = 1_725_800_000_000,
             ),

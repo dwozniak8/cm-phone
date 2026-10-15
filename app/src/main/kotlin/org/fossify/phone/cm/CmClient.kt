@@ -1,7 +1,10 @@
 package org.fossify.phone.cm
 
 import android.content.Context
+import org.fossify.commons.helpers.ensureBackgroundThread
 import org.fossify.phone.extensions.config
+
+private const val MOCK_URL = "mock"
 
 /**
  * Picks the right [CmApi] for a given base URL: the in-app [FakeCmApi] when the
@@ -17,15 +20,43 @@ object CmClient {
 
     fun getApi(context: Context, baseUrl: String = context.config.cmBaseUrl): CmApi {
         val url = baseUrl.trim()
-        return if (isFakeUrl(url)) {
-            fake
-        } else {
-            HttpCmApi(
-                baseUrl = url,
-                accessTokenProvider = { context.cmAuthStore.accessToken },
-            )
+        if (isFakeUrl(url)) {
+            return fake
+        }
+
+        val appContext = context.applicationContext
+        return HttpCmApi(
+            baseUrl = url,
+            accessTokenProvider = { appContext.cmAuthStore.accessToken },
+            refreshTokenProvider = { appContext.cmAuthStore.refreshToken },
+            onTokensRefreshed = { appContext.cmAuthStore.save(it) },
+        )
+    }
+
+    /**
+     * Fire-and-forget `DELETE /device/pair`. Snapshots the current token
+     * synchronously (call this *before* clearing [CmAuthStore]) and does the
+     * network on a background thread; failures are ignored.
+     */
+    fun revokeDeviceAsync(context: Context) {
+        revokeDeviceAsync(context.config.cmBaseUrl, context.cmAuthStore.accessToken)
+    }
+
+    /** As [revokeDeviceAsync], for a previously snapshotted pairing (e.g. one just replaced). */
+    fun revokeDeviceAsync(baseUrl: String, accessToken: String?) {
+        val url = baseUrl.trim()
+        if (isFakeUrl(url) || accessToken.isNullOrBlank()) {
+            return
+        }
+
+        ensureBackgroundThread {
+            try {
+                HttpCmApi(baseUrl = url, accessTokenProvider = { accessToken }).unpairDevice()
+            } catch (e: CmApiException) {
+                // ignored - the device is unpaired locally regardless
+            }
         }
     }
 
-    private fun isFakeUrl(url: String): Boolean = url.isEmpty() || url.equals("mock", ignoreCase = true)
+    private fun isFakeUrl(url: String): Boolean = url.isEmpty() || url.equals(MOCK_URL, ignoreCase = true)
 }

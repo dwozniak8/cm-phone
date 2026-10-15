@@ -33,13 +33,15 @@ data class CmPhoneNumber(
 )
 
 /**
- * A lightweight reference to a related CM record (property or client). [id] is
- * used to build the deep link into the CM web app; [label] is what we show.
+ * A related CM record (property or client). [id] builds the deep link into the
+ * CM web app; [label] is what we show; [notes] are that record's own notes,
+ * shown when its row is expanded on the contact detail screen.
  */
 @Serializable
 data class CmRef(
     val id: String,
     val label: String,
+    val notes: List<String> = emptyList(),
 )
 
 @Serializable
@@ -85,14 +87,44 @@ data class CreateContactRequest(
     val phoneNumbers: List<CmPhoneNumber> = emptyList(),
 )
 
+object NoteTargetType {
+    const val CONTACT = "contact"
+    const val BUILD = "build" // a related property / "nieruchomość"
+    const val CLIENT = "client" // a related prospect / "klient poszukujący"
+}
+
+/** Where a note should land. `null` target ⇒ the contact itself. */
+@Serializable
+data class NoteTarget(
+    val type: String,
+    val id: String,
+)
+
 @Serializable
 data class AddNoteRequest(
     val note: String,
+    val target: NoteTarget? = null,
 )
+
+/** Error body shape: `{ "error": "UPPER_SNAKE_CASE_CODE" }`. */
+@Serializable
+data class CmErrorBody(
+    val error: String? = null,
+)
+
+object CmErrorCodes {
+    const val INVALID_PAIRING_CODE = "INVALID_PAIRING_CODE"
+    const val INVALID_REFRESH_TOKEN = "INVALID_REFRESH_TOKEN"
+    const val DEVICE_SESSION_REVOKED = "DEVICE_SESSION_REVOKED"
+    const val CONTACT_ALREADY_EXISTS = "CONTACT_ALREADY_EXISTS"
+    const val INVALID_PHONE_NUMBER = "INVALID_PHONE_NUMBER"
+    const val ITEM_NOT_FOUND = "ITEM_NOT_FOUND"
+}
 
 /** Thrown by [CmApi] implementations on any non-success outcome. */
 class CmApiException(
     val statusCode: Int,
     message: String,
+    val errorCode: String? = null,
     cause: Throwable? = null,
 ) : Exception(message, cause)

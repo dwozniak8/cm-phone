@@ -118,14 +118,18 @@ Response: the created contact (same shape as list items).
 
 ### Batch 3 — CM contact detail
 - `CmContactActivity`: avatar + name + one call row per phone number (reuses
-  `startCallWithConfirmationCheck`, SIM selector when applicable). Below, three
-  read-only **collapsible** sections, each hidden when empty, each titled
-  `"<name> (<count>)"`: **Notatki**, **Powiązane nieruchomości**,
-  **Powiązani klienci poszukujący**. Opening one collapses the others; the first
-  non-empty section starts expanded. Every property / prospect row has an
-  "open in CM" button → `launchViewIntent` to
-  `<cmAppUrl>/app/builds/<id>` or `<cmAppUrl>/app/clients/<id>`. Data from the
-  local cache. `cmAppUrl` is a new Config value (default `https://app.crm.example`).
+  `startCallWithConfirmationCheck`, SIM selector when applicable). Below, a single
+  collapsible list of **records** — the contact first, then its related
+  properties / clients — each with a type icon on the left (person / house /
+  briefcase). Expanding a row shows that record's **notes** (or "Brak notatek");
+  opening one collapses the others; the first row (the contact) starts expanded.
+  Property / client rows carry an "open in CM" deep-link button →
+  `<cmAppUrl>/app/builds/<id>` · `<cmAppUrl>/app/clients/<id>`.
+- Toolbar overflow mirrors the call-history contact menu: **Dopisz notatkę**
+  (opens `CmAddNoteDialog`, refreshes on save) and **Zadzwoń**.
+- Per-record notes come from `CmRef.notes` (API: `DeviceRef.notes`, mapped from
+  each build's / client's `notesList`).
+- Data from the local cache. `cmAppUrl` is a Config value.
 - CM tab item click → `CmContactActivity`.
 
 ### Batch 4 — Incoming / ongoing call name
@@ -186,6 +190,41 @@ Response: the created contact (same shape as list items).
   adds only warnings, no new errors; the repo's `update-lint-baselines` bot owns
   that file).
 - All new strings have PL translations.
+
+### Batch 8 — align with the shipped `cm-api` (`docs/from-api.md`)
+
+- **`/device/` path prefix** on data calls: `HttpCmApi` now hits
+  `<baseUrl>/device/contacts[...]`. `baseUrl` from the pair response has no path.
+- **Bare-string error body** `{ "error": "UPPER_SNAKE" }`: parsed into
+  `CmApiException.errorCode`; `CmErrorCodes` holds the known values. Dialogs map
+  `CONTACT_ALREADY_EXISTS` / `INVALID_PHONE_NUMBER` / `ITEM_NOT_FOUND` to
+  specific toasts.
+- **Any `2xx` is success** — `HttpCmApi` already keyed off `isSuccessful`.
+- **Uppercase pairing code** before `POST /device/pair` (server is
+  case-sensitive).
+- **Refresh flow wired**: on a `401` from a bearer call `HttpCmApi` calls
+  `POST /device/refresh` once, persists the **rotated** tokens
+  (`onTokensRefreshed` → `CmAuthStore.save`), and retries. A second `401` ⇒
+  `CmSyncManager` clears the pairing.
+- **`DELETE /device/pair`**: `CmApi.unpairDevice()`; "Rozparuj urządzenie" fires
+  `CmClient.revokeDeviceAsync` (token snapshot + background call) before local
+  cleanup.
+- **Full-list authority**: `getContacts` already `replaceAll`s the cache, so rows
+  absent from the response are dropped — matches delta option B.
+- `user.name` may be `""` → `CmAuthStore` falls back to `user.id`, the toast to a
+  generic label.
+- **Deferred (phase 2):** intent filter for `cmphone://pair?code=…&service=…` so
+  "Autokonfiguracja" is one tap. Until then the link opens the pairing page in a
+  browser and the code is copied by hand.
+- **Note targets:** "Dopisz notatkę" gets a dropdown — the contact, or one of its
+  related builds / clients. `AddNoteRequest` gains an optional
+  `target { type, id }`; `null` ⇒ the contact (current behaviour). Server support
+  requested in `docs/to-api-note-targets.md`; `HttpCmApi` sends it speculatively,
+  `FakeCmApi` accepts it. Dropdown hidden when the contact has no related records.
+- Local-dev plumbing: `android.permission.INTERNET`, a debug-only
+  `network_security_config` (cleartext ok), and a `ProxySelector` that connects
+  directly to loopback / RFC-1918 hosts (Wi-Fi proxy would otherwise break a
+  local API — surfaces as `ECONNREFUSED`). Failed requests log under tag `CmApi`.
 
 ## Non-goals
 

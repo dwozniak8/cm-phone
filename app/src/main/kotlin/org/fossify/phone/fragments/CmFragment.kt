@@ -13,16 +13,14 @@ import org.fossify.commons.extensions.launchViewIntent
 import org.fossify.commons.extensions.toast
 import org.fossify.commons.extensions.underlineText
 import org.fossify.commons.extensions.value
-import org.fossify.commons.helpers.ensureBackgroundThread
 import org.fossify.phone.R
 import org.fossify.phone.activities.CmContactActivity
 import org.fossify.phone.activities.SimpleActivity
 import org.fossify.phone.adapters.CmContactsAdapter
-import org.fossify.phone.cm.CmApiException
-import org.fossify.phone.cm.CmClient
 import org.fossify.phone.cm.CmContact
 import org.fossify.phone.cm.CmContactStore
 import org.fossify.phone.cm.CmContactsUpdatedEvent
+import org.fossify.phone.cm.CmPairing
 import org.fossify.phone.cm.CmPairingStateChangedEvent
 import org.fossify.phone.cm.CmSyncManager
 import org.fossify.phone.cm.cmAuthStore
@@ -212,41 +210,28 @@ class CmFragment(context: Context, attributeSet: AttributeSet) :
 
         val activity = activity ?: return
         val serviceUrl = binding.cmPairingServiceUrl.value.trim()
-        activity.config.cmPairingUrl = serviceUrl
 
         pairing = true
         binding.cmPairButton.beGone()
         updateState()
 
-        ensureBackgroundThread {
-            try {
-                // pair against the address the user typed; the response tells us
-                // which endpoints to use from now on.
-                val response = CmClient.getApi(activity, serviceUrl).pair(code)
-                activity.config.cmBaseUrl = response.baseUrl?.takeIf { it.isNotBlank() } ?: serviceUrl
-                response.appUrl?.takeIf { it.isNotBlank() }?.let { activity.config.cmAppUrl = it }
-                activity.cmAuthStore.save(response)
-                EventBus.getDefault().post(CmPairingStateChangedEvent(paired = true))
+        CmPairing.pair(activity, serviceUrl, code) { result ->
+            activity.runOnUiThread {
+                pairing = false
+                binding.cmPairButton.beVisible()
+                when (result) {
+                    is CmPairing.Result.Success -> {
+                        binding.cmPairingCode.setText("")
+                        val account = result.accountName ?: activity.getString(R.string.cm_tab)
+                        activity.toast(activity.getString(R.string.cm_pairing_success, account))
+                        updateState()
+                        refreshFromServer()
+                    }
 
-                activity.runOnUiThread {
-                    pairing = false
-                    binding.cmPairButton.beVisible()
-                    binding.cmPairingCode.setText("")
-                    activity.toast(activity.getString(R.string.cm_pairing_success, activity.cmAuthStore.userName.orEmpty()))
-                    updateState()
-                    refreshFromServer()
-                }
-            } catch (e: Exception) {
-                val messageRes = if (e is CmApiException && e.statusCode == 401) {
-                    R.string.cm_pairing_failed
-                } else {
-                    R.string.cm_pairing_network_error
-                }
-                activity.runOnUiThread {
-                    pairing = false
-                    binding.cmPairButton.beVisible()
-                    activity.toast(messageRes)
-                    updateState()
+                    is CmPairing.Result.Failure -> {
+                        activity.toast(result.messageRes)
+                        updateState()
+                    }
                 }
             }
         }

@@ -94,6 +94,26 @@
             android:parentActivityName=".activities.SettingsActivity" />
 
         <activity
+            android:name=".activities.CmPairActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:noHistory="true"
+            android:theme="@style/Theme.Transparent">
+
+            <!-- "Autokonfiguracja" link from the CM web app -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="pair"
+                    android:scheme="cmphone" />
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name=".activities.CmContactActivity"
             android:configChanges="orientation"
             android:exported="false"

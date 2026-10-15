@@ -23,6 +23,42 @@
             android:textSize="@dimen/bigger_text_size"
             tools:text="Anna Nowak" />
 
+        <LinearLayout
+            android:id="@+id/cm_add_note_target_holder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/medium_margin"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <org.fossify.commons.views.MyTextView
+                android:id="@+id/cm_add_note_target_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/activity_margin"
+                android:alpha="0.8"
+                android:text="@string/cm_note_target"
+                android:textSize="@dimen/small_text_size" />
+
+            <org.fossify.commons.views.MyTextView
+                android:id="@+id/cm_add_note_target"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/tiny_margin"
+                android:background="@drawable/ripple_all_corners"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingStart="@dimen/activity_margin"
+                android:paddingTop="@dimen/normal_margin"
+                android:paddingEnd="@dimen/activity_margin"
+                android:paddingBottom="@dimen/normal_margin"
+                android:textDirection="firstStrongLtr"
+                android:textSize="@dimen/bigger_text_size"
+                tools:text="Kontakt: Anna Nowak" />
+
+        </LinearLayout>
+
         <org.fossify.commons.views.MyTextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
